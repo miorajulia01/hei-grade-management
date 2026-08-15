@@ -7,8 +7,8 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Exam {
-    private String id;
-    private String title;
-    private Double coefficient;
-    private String courseId;
+  private String id;
+  private String title;
+  private Double coefficient;
+  private String courseId;
 }

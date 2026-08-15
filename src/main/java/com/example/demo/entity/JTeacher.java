@@ -11,17 +11,17 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class JTeacher {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private String id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.UUID)
+  private String id;
 
-    @Column(name = "first_name")
-    private String firstName;
+  @Column(name = "first_name")
+  private String firstName;
 
-    @Column(name = "last_name")
-    private String lastName;
+  @Column(name = "last_name")
+  private String lastName;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private JUser user;
+  @OneToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "user_id")
+  private JUser user;
 }

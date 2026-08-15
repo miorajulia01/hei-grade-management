@@ -7,6 +7,6 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Group {
-    private String id;
-    private String name;
+  private String id;
+  private String name;
 }

@@ -11,17 +11,17 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class JExamen {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private String id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.UUID)
+  private String id;
 
-    @Column(nullable = false)
-    private String title;
+  @Column(nullable = false)
+  private String title;
 
-    @Column(nullable = false)
-    private Double coefficient;
+  @Column(nullable = false)
+  private Double coefficient;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "course_id", nullable = false)
-    private JCourse course;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "course_id", nullable = false)
+  private JCourse course;
 }

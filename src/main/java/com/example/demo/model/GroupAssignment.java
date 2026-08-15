@@ -7,7 +7,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class GroupAssignment {
-    private String id;
-    private String studentId;
-    private String groupId;
+  private String id;
+  private String studentId;
+  private String groupId;
 }

@@ -11,10 +11,10 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class JParcours {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private String id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.UUID)
+  private String id;
 
-    @Column(nullable = false)
-    private String name;
+  @Column(nullable = false)
+  private String name;
 }

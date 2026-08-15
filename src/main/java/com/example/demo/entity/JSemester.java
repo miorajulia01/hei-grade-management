@@ -11,10 +11,10 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class JSemester {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private String id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.UUID)
+  private String id;
 
-    @Column(nullable = false, unique = true)
-    private String name;
+  @Column(nullable = false, unique = true)
+  private String name;
 }

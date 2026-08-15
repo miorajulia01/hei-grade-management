@@ -7,7 +7,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class User {
-    private String id;
-    private String email;
-    private String role;
+  private String id;
+  private String email;
+  private String role;
 }

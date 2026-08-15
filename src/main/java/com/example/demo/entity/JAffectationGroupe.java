@@ -11,15 +11,15 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class JAffectationGroupe {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private String id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.UUID)
+  private String id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "student_id", nullable = false)
-    private JStudent student;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "student_id", nullable = false)
+  private JStudent student;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "group_id", nullable = false)
-    private JGroup group;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "group_id", nullable = false)
+  private JGroup group;
 }

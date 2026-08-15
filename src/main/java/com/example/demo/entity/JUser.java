@@ -11,16 +11,16 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class JUser {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private String id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.UUID)
+  private String id;
 
-    @Column(nullable = false, unique = true)
-    private String email;
+  @Column(nullable = false, unique = true)
+  private String email;
 
-    @Column(nullable = false)
-    private String password;
+  @Column(nullable = false)
+  private String password;
 
-    @Column(nullable = false)
-    private String role;
+  @Column(nullable = false)
+  private String role;
 }
