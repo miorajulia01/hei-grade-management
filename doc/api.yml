@@ -1,0 +1,310 @@
+openapi: 3.0.3
+info:
+  title: HEI Grade Management System API
+  description: Spécification OpenAPI du système de gestion des notes, relevés et diplômés pour HEI.
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:8080
+    description: Serveur de Développement Local
+
+paths:
+
+  # --- STUDENTS ---
+  /students:
+    get:
+      summary: Récupérer tous les étudiants
+      tags:
+        - Students
+      responses:
+        '200':
+          description: Liste des étudiants récupérée avec succès
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Student'
+
+  /students/{id}:
+    get:
+      summary: Détails d'un étudiant par son ID
+      tags:
+        - Students
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Étudiant trouvé
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Student'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /students/promotion/{promotionId}:
+    get:
+      summary: Liste des étudiants d'une promotion
+      tags:
+        - Students
+      parameters:
+        - name: promotionId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Liste des étudiants de la promotion
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Student'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # --- GRADES ---
+  /grades/student/{studentId}:
+    get:
+      summary: Récupérer toutes les notes d'un étudiant
+      tags:
+        - Grades
+      parameters:
+        - name: studentId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Liste des notes de l'étudiant
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /grades:
+    put:
+      summary: Modifier la note d'un étudiant (Professeur)
+      description: Permet à un enseignant de mettre à jour une note tout en alimentant l'historique d'audit.
+      tags:
+        - Grades
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateGradeDto'
+      responses:
+        '200':
+          description: Note mise à jour avec succès
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /grades/history/{gradeId}:
+    get:
+      summary: Historique des modifications d'une note
+      tags:
+        - Grades
+      parameters:
+        - name: gradeId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Historique récupéré avec succès
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # --- TRANSCRIPTS ---
+  /transcripts/student/{studentId}/semester/{semesterId}/send-async:
+    post:
+      summary: Envoi asynchrone du relevé de notes par email
+      description: Déclenche une tâche de fond POJA (@Async) pour envoyer le relevé de notes.
+      tags:
+        - Transcripts
+      parameters:
+        - name: studentId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: semesterId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '202':
+          description: Demande d'envoi acceptée et en cours de traitement asynchrone
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # --- GRADUATES ---
+  /graduates/promotion/{promotionId}:
+    get:
+      summary: Liste JSON des diplômés d'une promotion
+      tags:
+        - Graduates
+      parameters:
+        - name: promotionId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Liste des diplômés
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GraduateExportDto'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /graduates/promotion/{promotionId}/excel:
+    get:
+      summary: Téléchargement du fichier Excel (.xlsx) des diplômés
+      tags:
+        - Graduates
+      parameters:
+        - name: promotionId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Fichier Excel généré avec succès
+          content:
+            application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+              schema:
+                type: string
+                format: binary
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /ui/graduates:
+    get:
+      summary: Vue HTML Thymeleaf de la liste des diplômés
+      tags:
+        - UI
+      responses:
+        '200':
+          description: Page HTML rendue avec succès
+          content:
+            text/html:
+              schema:
+                type: string
+
+components:
+  schemas:
+
+    Student:
+      type: object
+      properties:
+        id:
+          type: string
+        studentNumber:
+          type: string
+          example: "STD24184"
+        firstName:
+          type: string
+        lastName:
+          type: string
+        promotionName:
+          type: string
+          example: "P3"
+        email:
+          type: string
+          example: "student@hei.school"
+
+    UpdateGradeDto:
+      type: object
+      required:
+        - gradeId
+        - teacherId
+        - newScore
+        - reason
+      properties:
+        gradeId:
+          type: string
+        teacherId:
+          type: string
+        newScore:
+          type: number
+          format: float
+          example: 14.5
+        reason:
+          type: string
+          example: "Correction suite à réclamation sur la question 3"
+
+    GraduateExportDto:
+      type: object
+      properties:
+        rang:
+          type: integer
+          example: 1
+        studentNumber:
+          type: string
+          example: "STD24184"
+        firstName:
+          type: string
+        lastName:
+          type: string
+        parcours:
+          type: string
+          example: "Ecosystem System (EL)"
+        overallGrade:
+          type: number
+          format: float
+          example: 15.25
+
+    ExceptionResponse:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+        status:
+          type: integer
+          example: 400
+        error:
+          type: string
+          example: "Bad Request"
+        message:
+          type: string
+          example: "Le motif de modification est obligatoire."
+
+  responses:
+    BadRequest:
+      description: Requête invalide (données manquantes ou hors limites)
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ExceptionResponse'
+    Forbidden:
+      description: Accès interdit (rôle non autorisé)
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ExceptionResponse'
+    NotFound:
+      description: Ressource non trouvée
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ExceptionResponse'
