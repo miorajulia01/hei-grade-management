@@ -6,13 +6,13 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class TeacherMapper {
-    public Teacher toModel(JTeacher entity) {
-        if (entity == null) return null;
-        return Teacher.builder()
-                .id(entity.getId())
-                .firstName(entity.getFirstName())
-                .lastName(entity.getLastName())
-                .email(entity.getUser() != null ? entity.getUser().getEmail() : null)
-                .build();
-    }
+  public Teacher toModel(JTeacher entity) {
+    if (entity == null) return null;
+    return Teacher.builder()
+        .id(entity.getId())
+        .firstName(entity.getFirstName())
+        .lastName(entity.getLastName())
+        .email(entity.getUser() != null ? entity.getUser().getEmail() : null)
+        .build();
+  }
 }

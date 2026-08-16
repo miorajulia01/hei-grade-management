@@ -6,13 +6,13 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class ExamMapper {
-    public Exam toModel(JExamen entity) {
-        if (entity == null) return null;
-        return Exam.builder()
-                .id(entity.getId())
-                .title(entity.getTitle())
-                .coefficient(entity.getCoefficient())
-                .courseId(entity.getCourse() != null ? entity.getCourse().getId() : null)
-                .build();
-    }
+  public Exam toModel(JExamen entity) {
+    if (entity == null) return null;
+    return Exam.builder()
+        .id(entity.getId())
+        .title(entity.getTitle())
+        .coefficient(entity.getCoefficient())
+        .courseId(entity.getCourse() != null ? entity.getCourse().getId() : null)
+        .build();
+  }
 }

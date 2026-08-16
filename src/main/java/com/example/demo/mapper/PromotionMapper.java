@@ -6,11 +6,8 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class PromotionMapper {
-    public Promotion toModel(JPromotion entity) {
-        if (entity == null) return null;
-        return Promotion.builder()
-                .id(entity.getId())
-                .name(entity.getName())
-                .build();
-    }
+  public Promotion toModel(JPromotion entity) {
+    if (entity == null) return null;
+    return Promotion.builder().id(entity.getId()).name(entity.getName()).build();
+  }
 }

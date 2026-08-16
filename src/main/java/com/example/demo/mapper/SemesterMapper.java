@@ -6,11 +6,8 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class SemesterMapper {
-    public Semester toModel(JSemester entity) {
-        if (entity == null) return null;
-        return Semester.builder()
-                .id(entity.getId())
-                .name(entity.getName())
-                .build();
-    }
+  public Semester toModel(JSemester entity) {
+    if (entity == null) return null;
+    return Semester.builder().id(entity.getId()).name(entity.getName()).build();
+  }
 }

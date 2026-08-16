@@ -6,11 +6,8 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class GroupMapper {
-    public Group toModel(JGroup entity) {
-        if (entity == null) return null;
-        return Group.builder()
-                .id(entity.getId())
-                .name(entity.getName())
-                .build();
-    }
+  public Group toModel(JGroup entity) {
+    if (entity == null) return null;
+    return Group.builder().id(entity.getId()).name(entity.getName()).build();
+  }
 }
