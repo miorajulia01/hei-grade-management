@@ -84,7 +84,6 @@ public class GradeService {
 
         Double oldScore = grade.getScore();
 
-        // 1. Enregistrement de l'historique d'audit immuable
         JGradeHistory history = JGradeHistory.builder()
                 .grade(grade)
                 .teacher(teacher)
@@ -95,7 +94,6 @@ public class GradeService {
                 .build();
         gradeHistoryRepository.save(history);
 
-        // 2. Mise à jour de la note
         grade.setScore(newScore);
         JGrade updatedGrade = gradeRepository.save(grade);
 
