@@ -15,6 +15,9 @@ public class JTeacher {
   @GeneratedValue(strategy = GenerationType.UUID)
   private String id;
 
+  @Column(name = "teacher_number")
+  private String teacherNumber;
+
   @Column(name = "first_name")
   private String firstName;
 

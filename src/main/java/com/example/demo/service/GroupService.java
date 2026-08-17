@@ -25,7 +25,7 @@ public class GroupService {
     List<JGroup> entities;
 
     if (ref != null && !ref.isBlank()) {
-      entities = groupRepository.findByRef(ref).map(List::of).orElse(List.of());
+      entities = groupRepository.findByName(ref).map(List::of).orElse(List.of());
     } else {
       entities = groupRepository.findAll();
     }
