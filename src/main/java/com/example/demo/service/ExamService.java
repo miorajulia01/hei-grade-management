@@ -18,13 +18,13 @@ public class ExamService {
   private final CourseRepository courseRepository;
 
   public List<Exam> getAllExams() {
-    return examRepository.findAll().stream()
-            .map(ExamMapper::toModel)
-            .toList();
+    return examRepository.findAll().stream().map(ExamMapper::toModel).toList();
   }
 
   public Exam getExamById(String id) {
-    JExam entity = examRepository.findById(id)
+    JExam entity =
+        examRepository
+            .findById(id)
             .orElseThrow(() -> new RuntimeException("Exam not found with id: " + id));
     return ExamMapper.toModel(entity);
   }
@@ -32,11 +32,14 @@ public class ExamService {
   public Exam saveExam(Exam model) {
     JCourse course = null;
     if (model.getCourse() != null && model.getCourse().getId() != null) {
-      course = courseRepository.findById(model.getCourse().getId())
+      course =
+          courseRepository
+              .findById(model.getCourse().getId())
               .orElseThrow(() -> new RuntimeException("Course not found"));
     }
 
-    JExam entity = JExam.builder()
+    JExam entity =
+        JExam.builder()
             .id(model.getId())
             .course(course)
             .type(model.getType())

@@ -12,28 +12,29 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class ProgramService {
 
-    private final ProgramRepository programRepository;
+  private final ProgramRepository programRepository;
 
-    public List<Program> getAllPrograms() {
-        return programRepository.findAll().stream()
-                .map(ProgramMapper::toModel)
-                .toList();
-    }
+  public List<Program> getAllPrograms() {
+    return programRepository.findAll().stream().map(ProgramMapper::toModel).toList();
+  }
 
-    public Program getProgramById(String id) {
-        JProgram entity = programRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Program not found with id: " + id));
-        return ProgramMapper.toModel(entity);
-    }
+  public Program getProgramById(String id) {
+    JProgram entity =
+        programRepository
+            .findById(id)
+            .orElseThrow(() -> new RuntimeException("Program not found with id: " + id));
+    return ProgramMapper.toModel(entity);
+  }
 
-    public Program saveProgram(Program model) {
-        JProgram entity = JProgram.builder()
-                .id(model.getId())
-                .code(model.getCode())
-                .label(model.getLabel())
-                .description(model.getDescription())
-                .build();
-        JProgram saved = programRepository.save(entity);
-        return ProgramMapper.toModel(saved);
-    }
+  public Program saveProgram(Program model) {
+    JProgram entity =
+        JProgram.builder()
+            .id(model.getId())
+            .code(model.getCode())
+            .label(model.getLabel())
+            .description(model.getDescription())
+            .build();
+    JProgram saved = programRepository.save(entity);
+    return ProgramMapper.toModel(saved);
+  }
 }

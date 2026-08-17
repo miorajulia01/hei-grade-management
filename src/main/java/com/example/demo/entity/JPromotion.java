@@ -11,17 +11,17 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class JPromotion {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private String id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.UUID)
+  private String id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "academic_year_id")
-    private JAcademicYear academicYear;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "academic_year_id")
+  private JAcademicYear academicYear;
 
-    @Column(nullable = false)
-    private String ref;
+  @Column(nullable = false)
+  private String ref;
 
-    @Column(nullable = false)
-    private String label;
+  @Column(nullable = false)
+  private String label;
 }

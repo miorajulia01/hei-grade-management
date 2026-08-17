@@ -7,10 +7,10 @@ public class ProgramMapper {
   public static Program toModel(JProgram entity) {
     if (entity == null) return null;
     return Program.builder()
-            .id(entity.getId())
-            .code(entity.getCode())
-            .label(entity.getLabel())
-            .description(entity.getDescription())
-            .build();
+        .id(entity.getId())
+        .code(entity.getCode())
+        .label(entity.getLabel())
+        .description(entity.getDescription())
+        .build();
   }
 }

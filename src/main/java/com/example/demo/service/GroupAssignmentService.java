@@ -25,12 +25,14 @@ public class GroupAssignmentService {
 
   public List<GroupAssignment> getAllGroupAssignments() {
     return groupAssignmentRepository.findAll().stream()
-            .map(GroupAssignmentMapper::toModel)
-            .toList();
+        .map(GroupAssignmentMapper::toModel)
+        .toList();
   }
 
   public GroupAssignment getGroupAssignmentById(String id) {
-    JGroupAssignment entity = groupAssignmentRepository.findById(id)
+    JGroupAssignment entity =
+        groupAssignmentRepository
+            .findById(id)
             .orElseThrow(() -> new RuntimeException("GroupAssignment not found with id: " + id));
     return GroupAssignmentMapper.toModel(entity);
   }
@@ -38,23 +40,30 @@ public class GroupAssignmentService {
   public GroupAssignment saveGroupAssignment(GroupAssignment model) {
     JStudent student = null;
     if (model.getStudent() != null && model.getStudent().getId() != null) {
-      student = studentRepository.findById(model.getStudent().getId())
+      student =
+          studentRepository
+              .findById(model.getStudent().getId())
               .orElseThrow(() -> new RuntimeException("Student not found"));
     }
 
     JGroup group = null;
     if (model.getGroup() != null && model.getGroup().getId() != null) {
-      group = groupRepository.findById(model.getGroup().getId())
+      group =
+          groupRepository
+              .findById(model.getGroup().getId())
               .orElseThrow(() -> new RuntimeException("Group not found"));
     }
 
     JSemester semester = null;
     if (model.getSemester() != null && model.getSemester().getId() != null) {
-      semester = semesterRepository.findById(model.getSemester().getId())
+      semester =
+          semesterRepository
+              .findById(model.getSemester().getId())
               .orElseThrow(() -> new RuntimeException("Semester not found"));
     }
 
-    JGroupAssignment entity = JGroupAssignment.builder()
+    JGroupAssignment entity =
+        JGroupAssignment.builder()
             .id(model.getId())
             .student(student)
             .group(group)

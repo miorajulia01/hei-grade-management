@@ -9,8 +9,13 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface GroupAssignmentRepository extends JpaRepository<JGroupAssignment, String> {
   List<JGroupAssignment> findByStudentId(String studentId);
+
   List<JGroupAssignment> findByGroupId(String groupId);
+
   List<JGroupAssignment> findByGroupIdAndSemesterId(String groupId, String semesterId);
-  Optional<JGroupAssignment> findByStudentIdAndGroupIdAndSemesterId(String studentId, String groupId, String semesterId);
+
+  Optional<JGroupAssignment> findByStudentIdAndGroupIdAndSemesterId(
+      String studentId, String groupId, String semesterId);
+
   List<JGroupAssignment> findByGroupIdAndIsActiveTrue(String groupId);
 }

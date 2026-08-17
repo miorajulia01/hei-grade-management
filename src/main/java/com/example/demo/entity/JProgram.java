@@ -11,15 +11,15 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class JProgram {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private String id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.UUID)
+  private String id;
 
-    @Column(nullable = false)
-    private String code;
+  @Column(nullable = false)
+  private String code;
 
-    @Column(nullable = false)
-    private String label;
+  @Column(nullable = false)
+  private String label;
 
-    private String description;
+  private String description;
 }

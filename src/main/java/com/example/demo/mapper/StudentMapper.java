@@ -7,15 +7,15 @@ public class StudentMapper {
   public static Student toModel(JStudent entity) {
     if (entity == null) return null;
     return Student.builder()
-            .id(entity.getId())
-            .promotion(PromotionMapper.toModel(entity.getPromotion()))
-            .user(UserMapper.toModel(entity.getUser()))
-            .studentNumber(entity.getStudentNumber())
-            .firstName(entity.getFirstName())
-            .lastName(entity.getLastName())
-            .email(entity.getEmail())
-            .status(entity.getStatus())
-            .dateEnroll(entity.getDateEnroll())
-            .build();
+        .id(entity.getId())
+        .promotion(PromotionMapper.toModel(entity.getPromotion()))
+        .user(UserMapper.toModel(entity.getUser()))
+        .studentNumber(entity.getStudentNumber())
+        .firstName(entity.getFirstName())
+        .lastName(entity.getLastName())
+        .email(entity.getEmail())
+        .status(entity.getStatus())
+        .dateEnroll(entity.getDateEnroll())
+        .build();
   }
 }

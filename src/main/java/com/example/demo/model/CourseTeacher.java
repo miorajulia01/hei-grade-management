@@ -9,9 +9,9 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CourseTeacher {
-    private CourseTeacherId id;
-    private Course course;
-    private Teacher teacher;
-    private LocalDate assignedAt;
-    private Boolean isPrimary;
+  private CourseTeacherId id;
+  private Course course;
+  private Teacher teacher;
+  private LocalDate assignedAt;
+  private Boolean isPrimary;
 }

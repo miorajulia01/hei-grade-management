@@ -9,13 +9,13 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class DocExport {
-    private String id;
-    private User user;
-    private String exportType;
-    private String fileName;
-    private String filePath;
-    private Long fileSize;
-    private String format;
-    private String filters;
-    private Instant createdAt;
+  private String id;
+  private User user;
+  private String exportType;
+  private String fileName;
+  private String filePath;
+  private Long fileSize;
+  private String format;
+  private String filters;
+  private Instant createdAt;
 }

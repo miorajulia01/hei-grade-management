@@ -9,8 +9,12 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface CourseRepository extends JpaRepository<JCourse, String> {
   Optional<JCourse> findByRefIgnoreCase(String ref);
+
   List<JCourse> findBySemesterId(String semesterId);
+
   List<JCourse> findByProgramId(String programId);
+
   List<JCourse> findByIsActiveTrue();
+
   List<JCourse> findByTitleContainingIgnoreCase(String title);
 }

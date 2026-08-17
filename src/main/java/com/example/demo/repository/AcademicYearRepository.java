@@ -7,5 +7,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface AcademicYearRepository extends JpaRepository<JAcademicYear, String> {
-    Optional<JAcademicYear> findByLabel(String label);
+  Optional<JAcademicYear> findByLabel(String label);
 }

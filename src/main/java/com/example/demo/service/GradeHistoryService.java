@@ -21,13 +21,13 @@ public class GradeHistoryService {
   private final TeacherRepository teacherRepository;
 
   public List<GradeHistory> getAllGradeHistories() {
-    return gradeHistoryRepository.findAll().stream()
-            .map(GradeHistoryMapper::toModel)
-            .toList();
+    return gradeHistoryRepository.findAll().stream().map(GradeHistoryMapper::toModel).toList();
   }
 
   public GradeHistory getGradeHistoryById(String id) {
-    JGradeHistory entity = gradeHistoryRepository.findById(id)
+    JGradeHistory entity =
+        gradeHistoryRepository
+            .findById(id)
             .orElseThrow(() -> new RuntimeException("GradeHistory not found with id: " + id));
     return GradeHistoryMapper.toModel(entity);
   }
@@ -35,17 +35,22 @@ public class GradeHistoryService {
   public GradeHistory saveGradeHistory(GradeHistory model) {
     JGrade grade = null;
     if (model.getGrade() != null && model.getGrade().getId() != null) {
-      grade = gradeRepository.findById(model.getGrade().getId())
+      grade =
+          gradeRepository
+              .findById(model.getGrade().getId())
               .orElseThrow(() -> new RuntimeException("Grade not found"));
     }
 
     JTeacher teacher = null;
     if (model.getTeacher() != null && model.getTeacher().getId() != null) {
-      teacher = teacherRepository.findById(model.getTeacher().getId())
+      teacher =
+          teacherRepository
+              .findById(model.getTeacher().getId())
               .orElseThrow(() -> new RuntimeException("Teacher not found"));
     }
 
-    JGradeHistory entity = JGradeHistory.builder()
+    JGradeHistory entity =
+        JGradeHistory.builder()
             .id(model.getId())
             .grade(grade)
             .teacher(teacher)

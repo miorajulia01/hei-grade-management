@@ -9,5 +9,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface PromotionRepository extends JpaRepository<JPromotion, String> {
   Optional<JPromotion> findByRefIgnoreCase(String ref);
+
   List<JPromotion> findByAcademicYearId(String academicYearId);
 }

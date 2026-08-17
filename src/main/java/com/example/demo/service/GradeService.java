@@ -21,13 +21,13 @@ public class GradeService {
   private final ExamRepository examRepository;
 
   public List<Grade> getAllGrades() {
-    return gradeRepository.findAll().stream()
-            .map(GradeMapper::toModel)
-            .toList();
+    return gradeRepository.findAll().stream().map(GradeMapper::toModel).toList();
   }
 
   public Grade getGradeById(String id) {
-    JGrade entity = gradeRepository.findById(id)
+    JGrade entity =
+        gradeRepository
+            .findById(id)
             .orElseThrow(() -> new RuntimeException("Grade not found with id: " + id));
     return GradeMapper.toModel(entity);
   }
@@ -35,17 +35,22 @@ public class GradeService {
   public Grade saveGrade(Grade model) {
     JStudent student = null;
     if (model.getStudent() != null && model.getStudent().getId() != null) {
-      student = studentRepository.findById(model.getStudent().getId())
+      student =
+          studentRepository
+              .findById(model.getStudent().getId())
               .orElseThrow(() -> new RuntimeException("Student not found"));
     }
 
     JExam exam = null;
     if (model.getExam() != null && model.getExam().getId() != null) {
-      exam = examRepository.findById(model.getExam().getId())
+      exam =
+          examRepository
+              .findById(model.getExam().getId())
               .orElseThrow(() -> new RuntimeException("Exam not found"));
     }
 
-    JGrade entity = JGrade.builder()
+    JGrade entity =
+        JGrade.builder()
             .id(model.getId())
             .student(student)
             .exam(exam)

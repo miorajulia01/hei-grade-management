@@ -8,5 +8,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ExamRepository extends JpaRepository<JExam, String> {
   List<JExam> findByCourseId(String courseId);
+
   List<JExam> findByIsPublishedTrue();
 }

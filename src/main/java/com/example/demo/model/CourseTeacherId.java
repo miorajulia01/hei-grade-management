@@ -10,6 +10,6 @@ import lombok.*;
 @AllArgsConstructor
 @EqualsAndHashCode
 public class CourseTeacherId implements Serializable {
-    private String courseId;
-    private String teacherId;
+  private String courseId;
+  private String teacherId;
 }

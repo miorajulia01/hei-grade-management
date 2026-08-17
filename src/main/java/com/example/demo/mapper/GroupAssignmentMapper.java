@@ -7,12 +7,12 @@ public class GroupAssignmentMapper {
   public static GroupAssignment toModel(JGroupAssignment entity) {
     if (entity == null) return null;
     return GroupAssignment.builder()
-            .id(entity.getId())
-            .student(StudentMapper.toModel(entity.getStudent()))
-            .group(GroupMapper.toModel(entity.getGroup()))
-            .semester(SemesterMapper.toModel(entity.getSemester()))
-            .assignedAt(entity.getAssignedAt())
-            .isActive(entity.getIsActive())
-            .build();
+        .id(entity.getId())
+        .student(StudentMapper.toModel(entity.getStudent()))
+        .group(GroupMapper.toModel(entity.getGroup()))
+        .semester(SemesterMapper.toModel(entity.getSemester()))
+        .assignedAt(entity.getAssignedAt())
+        .isActive(entity.getIsActive())
+        .build();
   }
 }

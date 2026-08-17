@@ -21,13 +21,13 @@ public class StudentService {
   private final PromotionRepository promotionRepository;
 
   public List<Student> getAllStudents() {
-    return studentRepository.findAll().stream()
-            .map(StudentMapper::toModel)
-            .toList();
+    return studentRepository.findAll().stream().map(StudentMapper::toModel).toList();
   }
 
   public Student getStudentById(String id) {
-    JStudent entity = studentRepository.findById(id)
+    JStudent entity =
+        studentRepository
+            .findById(id)
             .orElseThrow(() -> new RuntimeException("Student not found with id: " + id));
     return StudentMapper.toModel(entity);
   }
@@ -35,17 +35,22 @@ public class StudentService {
   public Student saveStudent(Student model) {
     JUser user = null;
     if (model.getUser() != null && model.getUser().getId() != null) {
-      user = userRepository.findById(model.getUser().getId())
+      user =
+          userRepository
+              .findById(model.getUser().getId())
               .orElseThrow(() -> new RuntimeException("User not found"));
     }
 
     JPromotion promotion = null;
     if (model.getPromotion() != null && model.getPromotion().getId() != null) {
-      promotion = promotionRepository.findById(model.getPromotion().getId())
+      promotion =
+          promotionRepository
+              .findById(model.getPromotion().getId())
               .orElseThrow(() -> new RuntimeException("Promotion not found"));
     }
 
-    JStudent entity = JStudent.builder()
+    JStudent entity =
+        JStudent.builder()
             .id(model.getId())
             .user(user)
             .promotion(promotion)

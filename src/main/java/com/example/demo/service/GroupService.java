@@ -18,13 +18,13 @@ public class GroupService {
   private final ProgramRepository programRepository;
 
   public List<Group> getAllGroups() {
-    return groupRepository.findAll().stream()
-            .map(GroupMapper::toModel)
-            .toList();
+    return groupRepository.findAll().stream().map(GroupMapper::toModel).toList();
   }
 
   public Group getGroupById(String id) {
-    JGroup entity = groupRepository.findById(id)
+    JGroup entity =
+        groupRepository
+            .findById(id)
             .orElseThrow(() -> new RuntimeException("Group not found with id: " + id));
     return GroupMapper.toModel(entity);
   }
@@ -32,15 +32,13 @@ public class GroupService {
   public Group saveGroup(Group model) {
     JProgram program = null;
     if (model.getProgram() != null && model.getProgram().getId() != null) {
-      program = programRepository.findById(model.getProgram().getId())
+      program =
+          programRepository
+              .findById(model.getProgram().getId())
               .orElseThrow(() -> new RuntimeException("Program not found"));
     }
 
-    JGroup entity = JGroup.builder()
-            .id(model.getId())
-            .program(program)
-            .ref(model.getRef())
-            .build();
+    JGroup entity = JGroup.builder().id(model.getId()).program(program).ref(model.getRef()).build();
 
     JGroup saved = groupRepository.save(entity);
     return GroupMapper.toModel(saved);

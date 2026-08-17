@@ -9,5 +9,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface SemesterRepository extends JpaRepository<JSemester, String> {
   Optional<JSemester> findByCode(String code);
+
   List<JSemester> findByAcademicYearId(String academicYearId);
 }

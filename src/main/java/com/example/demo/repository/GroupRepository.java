@@ -9,5 +9,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface GroupRepository extends JpaRepository<JGroup, String> {
   Optional<JGroup> findByRef(String ref);
+
   List<JGroup> findByProgramId(String programId);
 }

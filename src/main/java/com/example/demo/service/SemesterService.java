@@ -18,13 +18,13 @@ public class SemesterService {
   private final AcademicYearRepository academicYearRepository;
 
   public List<Semester> getAllSemesters() {
-    return semesterRepository.findAll().stream()
-            .map(SemesterMapper::toModel)
-            .toList();
+    return semesterRepository.findAll().stream().map(SemesterMapper::toModel).toList();
   }
 
   public Semester getSemesterById(String id) {
-    JSemester entity = semesterRepository.findById(id)
+    JSemester entity =
+        semesterRepository
+            .findById(id)
             .orElseThrow(() -> new RuntimeException("Semester not found with id: " + id));
     return SemesterMapper.toModel(entity);
   }
@@ -32,11 +32,14 @@ public class SemesterService {
   public Semester saveSemester(Semester model) {
     JAcademicYear academicYear = null;
     if (model.getAcademicYear() != null && model.getAcademicYear().getId() != null) {
-      academicYear = academicYearRepository.findById(model.getAcademicYear().getId())
+      academicYear =
+          academicYearRepository
+              .findById(model.getAcademicYear().getId())
               .orElseThrow(() -> new RuntimeException("Academic year not found"));
     }
 
-    JSemester entity = JSemester.builder()
+    JSemester entity =
+        JSemester.builder()
             .id(model.getId())
             .academicYear(academicYear)
             .code(model.getCode())

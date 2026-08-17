@@ -8,5 +8,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface GradeHistoryRepository extends JpaRepository<JGradeHistory, String> {
   List<JGradeHistory> findByGradeId(String gradeId);
+
   List<JGradeHistory> findByTeacherId(String teacherId);
 }

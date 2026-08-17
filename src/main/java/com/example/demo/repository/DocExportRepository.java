@@ -7,7 +7,9 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface DocExportRepository extends JpaRepository<JDocExport, String> {
-    List<JDocExport> findByUserId(String userId);
-    List<JDocExport> findByExportType(String exportType);
-    List<JDocExport> findByFormat(String format);
+  List<JDocExport> findByUserId(String userId);
+
+  List<JDocExport> findByExportType(String exportType);
+
+  List<JDocExport> findByFormat(String format);
 }

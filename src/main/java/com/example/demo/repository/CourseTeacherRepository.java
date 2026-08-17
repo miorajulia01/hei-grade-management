@@ -9,7 +9,9 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CourseTeacherRepository extends JpaRepository<JCourseTeacher, CourseTeacherId> {
-    List<JCourseTeacher> findByCourseId(String courseId);
-    List<JCourseTeacher> findByTeacherId(String teacherId);
-    Optional<JCourseTeacher> findByCourseIdAndIsPrimaryTrue(String courseId);
+  List<JCourseTeacher> findByCourseId(String courseId);
+
+  List<JCourseTeacher> findByTeacherId(String teacherId);
+
+  Optional<JCourseTeacher> findByCourseIdAndIsPrimaryTrue(String courseId);
 }

@@ -8,5 +8,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ProgramRepository extends JpaRepository<JProgram, String> {
   Optional<JProgram> findByCode(String code);
+
   Optional<JProgram> findByLabelIgnoreCase(String label);
 }

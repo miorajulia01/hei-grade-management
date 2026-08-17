@@ -9,8 +9,8 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AcademicYear {
-    private String id;
-    private String label;
-    private LocalDate startDate;
-    private LocalDate endDate;
+  private String id;
+  private String label;
+  private LocalDate startDate;
+  private LocalDate endDate;
 }

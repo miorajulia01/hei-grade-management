@@ -15,19 +15,20 @@ public class UserService {
   private final UserRepository userRepository;
 
   public List<User> getAllUsers() {
-    return userRepository.findAll().stream()
-            .map(UserMapper::toModel)
-            .toList();
+    return userRepository.findAll().stream().map(UserMapper::toModel).toList();
   }
 
   public User getUserById(String id) {
-    JUser entity = userRepository.findById(id)
+    JUser entity =
+        userRepository
+            .findById(id)
             .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
     return UserMapper.toModel(entity);
   }
 
   public User saveUser(User model) {
-    JUser entity = JUser.builder()
+    JUser entity =
+        JUser.builder()
             .id(model.getId())
             .email(model.getEmail())
             .role(model.getRole())
