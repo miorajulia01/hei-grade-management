@@ -1,19 +1,22 @@
 package com.example.demo.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.example.demo.enums.StatusEnum;
+import java.time.LocalDate;
+import lombok.*;
 
-@Data
+@Getter
+@Setter
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class Student {
   private String id;
+  private Promotion promotion;
+  private User user;
   private String studentNumber;
   private String firstName;
   private String lastName;
   private String email;
-  private String promotionName;
+  private StatusEnum status;
+  private LocalDate dateEnroll;
 }

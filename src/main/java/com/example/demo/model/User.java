@@ -1,13 +1,20 @@
 package com.example.demo.model;
 
+import com.example.demo.enums.StatusEnum;
+import com.example.demo.enums.UserRole;
+import java.time.Instant;
 import lombok.*;
 
-@Data
+@Getter
+@Setter
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class User {
   private String id;
   private String email;
-  private String role;
+  private String password;
+  private UserRole role;
+  private Instant createdAt;
+  private StatusEnum status;
 }
