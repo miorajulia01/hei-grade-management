@@ -1,44 +1,48 @@
 package com.example.demo.service;
 
 import com.example.demo.entity.JTeacher;
+import com.example.demo.entity.JUser;
 import com.example.demo.mapper.TeacherMapper;
 import com.example.demo.model.Teacher;
 import com.example.demo.repository.TeacherRepository;
+import com.example.demo.repository.UserRepository;
 import java.util.List;
-import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@RequiredArgsConstructor
 public class TeacherService {
 
   private final TeacherRepository teacherRepository;
-  private final TeacherMapper teacherMapper;
+  private final UserRepository userRepository;
 
-  public TeacherService(TeacherRepository teacherRepository, TeacherMapper teacherMapper) {
-    this.teacherRepository = teacherRepository;
-    this.teacherMapper = teacherMapper;
+  public List<Teacher> getAllTeachers() {
+    return teacherRepository.findAll().stream()
+            .map(TeacherMapper::toModel)
+            .toList();
   }
 
-  @Transactional(readOnly = true)
-  public List<Teacher> getTeachers(String teacherNumber) {
-    List<JTeacher> entities;
+  public Teacher getTeacherById(String id) {
+    JTeacher entity = teacherRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Teacher not found with id: " + id));
+    return TeacherMapper.toModel(entity);
+  }
 
-    if (teacherNumber != null && !teacherNumber.isBlank()) {
-      entities =
-          teacherRepository.findByTeacherNumber(teacherNumber).map(List::of).orElse(List.of());
-    } else {
-      entities = teacherRepository.findAll();
+  public Teacher saveTeacher(Teacher model) {
+    JUser user = null;
+    if (model.getUser() != null && model.getUser().getId() != null) {
+      user = userRepository.findById(model.getUser().getId())
+              .orElseThrow(() -> new RuntimeException("User not found"));
     }
 
-    return entities.stream().map(teacherMapper::toModel).collect(Collectors.toList());
-  }
+    JTeacher entity = JTeacher.builder()
+            .id(model.getId())
+            .user(user)
+            .specialty(model.getSpecialty())
+            .build();
 
-  @Transactional(readOnly = true)
-  public Teacher getTeacherById(String id) {
-    return teacherRepository
-        .findById(id)
-        .map(teacherMapper::toModel)
-        .orElseThrow(() -> new IllegalArgumentException("Teacher not found with ID: " + id));
+    JTeacher saved = teacherRepository.save(entity);
+    return TeacherMapper.toModel(saved);
   }
 }

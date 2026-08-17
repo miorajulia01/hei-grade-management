@@ -5,39 +5,35 @@ import com.example.demo.mapper.UserMapper;
 import com.example.demo.model.User;
 import com.example.demo.repository.UserRepository;
 import java.util.List;
-import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
 
   private final UserRepository userRepository;
-  private final UserMapper userMapper;
 
-  public UserService(UserRepository userRepository, UserMapper userMapper) {
-    this.userRepository = userRepository;
-    this.userMapper = userMapper;
+  public List<User> getAllUsers() {
+    return userRepository.findAll().stream()
+            .map(UserMapper::toModel)
+            .toList();
   }
 
-  @Transactional(readOnly = true)
-  public List<User> getUsers(String email) {
-    List<JUser> entities;
-
-    if (email != null && !email.isBlank()) {
-      entities = userRepository.findByEmail(email).map(List::of).orElse(List.of());
-    } else {
-      entities = userRepository.findAll();
-    }
-
-    return entities.stream().map(userMapper::toModel).collect(Collectors.toList());
-  }
-
-  @Transactional(readOnly = true)
   public User getUserById(String id) {
-    return userRepository
-        .findById(id)
-        .map(userMapper::toModel)
-        .orElseThrow(() -> new IllegalArgumentException("User not found with ID: " + id));
+    JUser entity = userRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
+    return UserMapper.toModel(entity);
+  }
+
+  public User saveUser(User model) {
+    JUser entity = JUser.builder()
+            .id(model.getId())
+            .email(model.getEmail())
+            .role(model.getRole())
+            .status(model.getStatus())
+            .build();
+    JUser saved = userRepository.save(entity);
+    return UserMapper.toModel(saved);
   }
 }
