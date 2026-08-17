@@ -4,24 +4,22 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "promotion")
+@Table(name = "program")
 @Getter
 @Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class JPromotion {
+public class JProgram {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "academic_year_id")
-    private JAcademicYear academicYear;
-
     @Column(nullable = false)
-    private String ref;
+    private String code;
 
     @Column(nullable = false)
     private String label;
+
+    private String description;
 }

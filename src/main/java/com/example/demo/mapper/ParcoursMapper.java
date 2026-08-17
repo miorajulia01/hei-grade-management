@@ -1,13 +1,13 @@
 package com.example.demo.mapper;
 
-import com.example.demo.entity.JParcours;
-import com.example.demo.model.Parcours;
+import com.example.demo.entity.JProgram;
+import com.example.demo.model.Program;
 import org.springframework.stereotype.Component;
 
 @Component
 public class ParcoursMapper {
-  public Parcours toModel(JParcours entity) {
+  public Program toModel(JProgram entity) {
     if (entity == null) return null;
-    return Parcours.builder().id(entity.getId()).name(entity.getName()).build();
+    return Program.builder().id(entity.getId()).name(entity.getName()).build();
   }
 }

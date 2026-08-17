@@ -30,5 +30,5 @@ public class JCourse {
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "parcours_id")
-  private JParcours parcours;
+  private JProgram parcours;
 }
