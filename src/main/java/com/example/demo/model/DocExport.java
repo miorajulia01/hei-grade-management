@@ -1,6 +1,5 @@
 package com.example.demo.model;
 
-import com.example.demo.enums.StatusEnum;
 import java.time.Instant;
 import lombok.*;
 
@@ -12,8 +11,11 @@ import lombok.*;
 public class DocExport {
     private String id;
     private User user;
-    private String docType;
-    private String fileUrl;
-    private StatusEnum status;
+    private String exportType;
+    private String fileName;
+    private String filePath;
+    private Long fileSize;
+    private String format;
+    private String filters;
     private Instant createdAt;
 }

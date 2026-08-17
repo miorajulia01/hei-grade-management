@@ -1,6 +1,5 @@
 package com.example.demo.entity;
 
-import com.example.demo.enums.StatusEnum;
 import jakarta.persistence.*;
 import java.time.Instant;
 import lombok.*;
@@ -22,14 +21,23 @@ public class JDocExport {
     @JoinColumn(name = "user_id")
     private JUser user;
 
-    @Column(name = "doc_type", nullable = false)
-    private String docType;
+    @Column(name = "export_type", nullable = false)
+    private String exportType;
 
-    @Column(name = "file_url")
-    private String fileUrl;
+    @Column(name = "file_name", nullable = false)
+    private String fileName;
 
-    @Enumerated(EnumType.STRING)
-    private StatusEnum status;
+    @Column(name = "file_path")
+    private String filePath;
+
+    @Column(name = "file_size")
+    private Long fileSize;
+
+    @Column(name = "format", nullable = false)
+    private String format;
+
+    @Column(name = "filters", columnDefinition = "jsonb")
+    private String filters;
 
     @Column(name = "created_at")
     private Instant createdAt;
