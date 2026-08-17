@@ -1,9 +1,7 @@
-CREATE TYPE exam_type AS ENUM ('CC', 'DS', 'TP', 'FINAL_EXAM');
-
 CREATE TABLE "exam" (
                         id VARCHAR PRIMARY KEY DEFAULT gen_random_uuid()::varchar,
                         course_id VARCHAR REFERENCES "course"(id),
-                        type exam_type NOT NULL,
+                        type VARCHAR NOT NULL,
                         title VARCHAR,
                         date_exam TIMESTAMP WITH TIME ZONE,
                         coefficient NUMERIC(5, 2) NOT NULL,
