@@ -8,9 +8,8 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface TeacherRepository extends JpaRepository<JTeacher, String> {
+  Optional<JTeacher> findByUserId(String userId);
   List<JTeacher> findByLastNameContainingIgnoreCase(String lastName);
-
   List<JTeacher> findByFirstNameContainingIgnoreCase(String firstName);
-
-  Optional<JTeacher> findByTeacherNumber(String teacherNumber);
+  List<JTeacher> findBySpecialtyContainingIgnoreCase(String specialty);
 }
