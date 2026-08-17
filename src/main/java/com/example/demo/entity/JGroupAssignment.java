@@ -10,7 +10,7 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class JAffectationGroupe {
+public class JGroupAssignment {
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
   private String id;
