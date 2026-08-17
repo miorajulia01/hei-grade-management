@@ -22,15 +22,13 @@ public class GroupService {
     }
 
     @Transactional(readOnly = true)
-    public List<Group> getGroups(String name, String ref) {
+    public List<Group> getGroups(String ref) {
         List<JGroup> entities;
 
         if (ref != null && !ref.isBlank()) {
             entities = groupRepository.findByRef(ref)
                     .map(List::of)
                     .orElse(List.of());
-        } else if (name != null && !name.isBlank()) {
-            entities = groupRepository.findByNameContainingIgnoreCase(name);
         } else {
             entities = groupRepository.findAll();
         }
