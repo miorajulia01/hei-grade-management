@@ -1,11 +1,11 @@
 package com.example.demo.repository;
 
-import com.example.demo.entity.JExamen;
+import com.example.demo.entity.JExam;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface ExamenRepository extends JpaRepository<JExamen, String> {
-  List<JExamen> findByCourseId(String courseId);
+public interface ExamRepository extends JpaRepository<JExam, String> {
+  List<JExam> findByCourseId(String courseId);
 }

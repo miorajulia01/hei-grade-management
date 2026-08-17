@@ -10,7 +10,6 @@ servers:
 
 paths:
 
-  # --- STUDENTS ---
   /students:
     get:
       summary: Récupérer tous les étudiants
@@ -70,7 +69,6 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
 
-  # --- GRADES ---
   /grades/student/{studentId}:
     get:
       summary: Récupérer toutes les notes d'un étudiant
@@ -127,7 +125,6 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
 
-  # --- TRANSCRIPTS ---
   /transcripts/student/{studentId}/semester/{semesterId}/send-async:
     post:
       summary: Envoi asynchrone du relevé de notes par email
@@ -151,7 +148,6 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
 
-  # --- GRADUATES ---
   /graduates/promotion/{promotionId}:
     get:
       summary: Liste JSON des diplômés d'une promotion

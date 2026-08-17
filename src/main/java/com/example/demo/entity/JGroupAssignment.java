@@ -4,24 +4,22 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "examen")
+@Table(name = "affectation_groupe")
 @Getter
 @Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class JExamen {
+public class JGroupAssignment {
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
   private String id;
 
-  @Column(nullable = false)
-  private String title;
-
-  @Column(nullable = false)
-  private Double coefficient;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "student_id", nullable = false)
+  private JStudent student;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "course_id", nullable = false)
-  private JCourse course;
+  @JoinColumn(name = "group_id", nullable = false)
+  private JGroup group;
 }
