@@ -1,6 +1,6 @@
 package com.example.demo.service;
 
-import com.example.demo.entity.JExamen;
+import com.example.demo.entity.JExam;
 import com.example.demo.entity.JGrade;
 import com.example.demo.entity.JGradeHistory;
 import com.example.demo.entity.JStudent;
@@ -9,7 +9,7 @@ import com.example.demo.mapper.GradeHistoryMapper;
 import com.example.demo.mapper.GradeMapper;
 import com.example.demo.model.Grade;
 import com.example.demo.model.GradeHistory;
-import com.example.demo.repository.ExamenRepository;
+import com.example.demo.repository.ExamRepository;
 import com.example.demo.repository.GradeHistoryRepository;
 import com.example.demo.repository.GradeRepository;
 import com.example.demo.repository.StudentRepository;
@@ -27,7 +27,7 @@ public class GradeService {
     private final GradeRepository gradeRepository;
     private final GradeHistoryRepository gradeHistoryRepository;
     private final StudentRepository studentRepository;
-    private final ExamenRepository examenRepository;
+    private final ExamRepository examenRepository;
     private final TeacherRepository teacherRepository;
     private final GradeMapper gradeMapper;
     private final GradeHistoryMapper gradeHistoryMapper;
@@ -36,7 +36,7 @@ public class GradeService {
             GradeRepository gradeRepository,
             GradeHistoryRepository gradeHistoryRepository,
             StudentRepository studentRepository,
-            ExamenRepository examenRepository,
+            ExamRepository examenRepository,
             TeacherRepository teacherRepository,
             GradeMapper gradeMapper,
             GradeHistoryMapper gradeHistoryMapper) {
@@ -56,7 +56,7 @@ public class GradeService {
         JStudent student = studentRepository.findById(studentId)
                 .orElseThrow(() -> new IllegalArgumentException("Student not found with ID: " + studentId));
 
-        JExamen exam = examenRepository.findById(examId)
+        JExam exam = examenRepository.findById(examId)
                 .orElseThrow(() -> new IllegalArgumentException("Exam not found with ID: " + examId));
 
         JGrade grade = JGrade.builder()

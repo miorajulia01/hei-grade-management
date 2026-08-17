@@ -10,7 +10,7 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class JExamen {
+public class JExam {
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
   private String id;

@@ -24,5 +24,5 @@ public class JGrade {
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "exam_id", nullable = false)
-  private JExamen exam;
+  private JExam exam;
 }
