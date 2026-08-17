@@ -22,13 +22,13 @@ public class TeacherService {
     }
 
     @Transactional(readOnly = true)
-    public List<Teacher> getTeachers(String firstName, String lastName) {
+    public List<Teacher> getTeachers(String teacherNumber) {
         List<JTeacher> entities;
 
-        if (lastName != null && !lastName.isBlank()) {
-            entities = teacherRepository.findByLastNameContainingIgnoreCase(lastName);
-        } else if (firstName != null && !firstName.isBlank()) {
-            entities = teacherRepository.findByFirstNameContainingIgnoreCase(firstName);
+        if (teacherNumber != null && !teacherNumber.isBlank()) {
+            entities = teacherRepository.findByTeacherNumber(teacherNumber)
+                    .map(List::of)
+                    .orElse(List.of());
         } else {
             entities = teacherRepository.findAll();
         }
