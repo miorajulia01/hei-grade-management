@@ -1,7 +1,7 @@
 package com.example.demo.service;
 
 import com.example.demo.entity.JProgram;
-import com.example.demo.mapper.ParcoursMapper;
+import com.example.demo.mapper.ProgramMapper;
 import com.example.demo.model.Program;
 import com.example.demo.repository.ParcoursRepository;
 import java.util.List;
@@ -13,11 +13,11 @@ import org.springframework.transaction.annotation.Transactional;
 public class ParcoursService {
 
   private final ParcoursRepository parcoursRepository;
-  private final ParcoursMapper parcoursMapper;
+  private final ProgramMapper programMapper;
 
-  public ParcoursService(ParcoursRepository parcoursRepository, ParcoursMapper parcoursMapper) {
+  public ParcoursService(ParcoursRepository parcoursRepository, ProgramMapper programMapper) {
     this.parcoursRepository = parcoursRepository;
-    this.parcoursMapper = parcoursMapper;
+    this.programMapper = programMapper;
   }
 
   @Transactional(readOnly = true)
@@ -30,14 +30,14 @@ public class ParcoursService {
       entities = parcoursRepository.findAll();
     }
 
-    return entities.stream().map(parcoursMapper::toModel).collect(Collectors.toList());
+    return entities.stream().map(programMapper::toModel).collect(Collectors.toList());
   }
 
   @Transactional(readOnly = true)
   public Program getParcoursById(String id) {
     return parcoursRepository
         .findById(id)
-        .map(parcoursMapper::toModel)
+        .map(programMapper::toModel)
         .orElseThrow(() -> new IllegalArgumentException("Program not found with ID: " + id));
   }
 }
