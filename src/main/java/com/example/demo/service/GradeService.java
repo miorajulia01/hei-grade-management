@@ -114,6 +114,20 @@ public class GradeService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
+    public List<Grade> getAllGrades() {
+        return gradeRepository.findAll().stream()
+                .map(gradeMapper::toModel)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public Grade getGradeById(String id) {
+        return gradeRepository.findById(id)
+                .map(gradeMapper::toModel)
+                .orElseThrow(() -> new IllegalArgumentException("Grade not found with ID: " + id));
+    }
+
     private void validateScore(Double score) {
         if (score == null || score < 0.0 || score > 20.0) {
             throw new IllegalArgumentException("Grade score must be between 0.00 and 20.00.");

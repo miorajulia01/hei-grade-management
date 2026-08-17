@@ -44,4 +44,6 @@ public class TeacherService {
                 .map(teacherMapper::toModel)
                 .orElseThrow(() -> new IllegalArgumentException("Teacher not found with ID: " + id));
     }
+
+
 }
