@@ -1,43 +1,53 @@
 package com.example.demo.service;
 
+import com.example.demo.entity.JCourse;
 import com.example.demo.entity.JExam;
 import com.example.demo.mapper.ExamMapper;
 import com.example.demo.model.Exam;
+import com.example.demo.repository.CourseRepository;
 import com.example.demo.repository.ExamRepository;
 import java.util.List;
-import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@RequiredArgsConstructor
 public class ExamService {
 
   private final ExamRepository examRepository;
-  private final ExamMapper examMapper;
+  private final CourseRepository courseRepository;
 
-  public ExamService(ExamRepository examRepository, ExamMapper examMapper) {
-    this.examRepository = examRepository;
-    this.examMapper = examMapper;
+  public List<Exam> getAllExams() {
+    return examRepository.findAll().stream()
+            .map(ExamMapper::toModel)
+            .toList();
   }
 
-  @Transactional(readOnly = true)
-  public List<Exam> getExams(String courseId) {
-    List<JExam> entities;
+  public Exam getExamById(String id) {
+    JExam entity = examRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Exam not found with id: " + id));
+    return ExamMapper.toModel(entity);
+  }
 
-    if (courseId != null && !courseId.isBlank()) {
-      entities = examRepository.findByCourseId(courseId);
-    } else {
-      entities = examRepository.findAll();
+  public Exam saveExam(Exam model) {
+    JCourse course = null;
+    if (model.getCourse() != null && model.getCourse().getId() != null) {
+      course = courseRepository.findById(model.getCourse().getId())
+              .orElseThrow(() -> new RuntimeException("Course not found"));
     }
 
-    return entities.stream().map(examMapper::toModel).collect(Collectors.toList());
-  }
+    JExam entity = JExam.builder()
+            .id(model.getId())
+            .course(course)
+            .type(model.getType())
+            .title(model.getTitle())
+            .dateExam(model.getDateExam())
+            .coefficient(model.getCoefficient())
+            .order(model.getOrder())
+            .isPublished(model.getIsPublished())
+            .build();
 
-  @Transactional(readOnly = true)
-  public Exam getExamById(String id) {
-    return examRepository
-        .findById(id)
-        .map(examMapper::toModel)
-        .orElseThrow(() -> new IllegalArgumentException("Exam not found with ID: " + id));
+    JExam saved = examRepository.save(entity);
+    return ExamMapper.toModel(saved);
   }
 }
