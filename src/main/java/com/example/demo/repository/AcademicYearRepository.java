@@ -1,0 +1,11 @@
+package com.example.demo.repository;
+
+import com.example.demo.entity.JAcademicYear;
+import java.util.Optional;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface AcademicYearRepository extends JpaRepository<JAcademicYear, String> {
+    Optional<JAcademicYear> findByLabel(String label);
+}

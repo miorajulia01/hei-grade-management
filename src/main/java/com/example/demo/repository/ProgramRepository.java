@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface ParcoursRepository extends JpaRepository<JProgram, String> {
-  Optional<JProgram> findByName(String name);
+public interface ProgramRepository extends JpaRepository<JProgram, String> {
+  Optional<JProgram> findByCode(String code);
+  Optional<JProgram> findByLabelIgnoreCase(String label);
 }
