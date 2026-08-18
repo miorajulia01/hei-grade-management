@@ -8,6 +8,7 @@ import com.example.demo.model.Grade;
 import com.example.demo.repository.ExamRepository;
 import com.example.demo.repository.GradeRepository;
 import com.example.demo.repository.StudentRepository;
+import com.example.demo.validator.GradeValidator;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -26,39 +27,41 @@ public class GradeService {
 
   public Grade getGradeById(String id) {
     JGrade entity =
-        gradeRepository
-            .findById(id)
-            .orElseThrow(() -> new RuntimeException("Grade not found with id: " + id));
+            gradeRepository
+                    .findById(id)
+                    .orElseThrow(() -> new RuntimeException("Grade not found with id: " + id));
     return GradeMapper.toModel(entity);
   }
 
   public Grade saveGrade(Grade model) {
+    GradeValidator.validate(model);
+
     JStudent student = null;
     if (model.getStudent() != null && model.getStudent().getId() != null) {
       student =
-          studentRepository
-              .findById(model.getStudent().getId())
-              .orElseThrow(() -> new RuntimeException("Student not found"));
+              studentRepository
+                      .findById(model.getStudent().getId())
+                      .orElseThrow(() -> new RuntimeException("Student not found"));
     }
 
     JExam exam = null;
     if (model.getExam() != null && model.getExam().getId() != null) {
       exam =
-          examRepository
-              .findById(model.getExam().getId())
-              .orElseThrow(() -> new RuntimeException("Exam not found"));
+              examRepository
+                      .findById(model.getExam().getId())
+                      .orElseThrow(() -> new RuntimeException("Exam not found"));
     }
 
     JGrade entity =
-        JGrade.builder()
-            .id(model.getId())
-            .student(student)
-            .exam(exam)
-            .score(model.getScore())
-            .weightedScore(model.getWeightedScore())
-            .isValidated(model.getIsValidated())
-            .validatedAt(model.getValidatedAt())
-            .build();
+            JGrade.builder()
+                    .id(model.getId())
+                    .student(student)
+                    .exam(exam)
+                    .score(model.getScore())
+                    .weightedScore(model.getWeightedScore())
+                    .isValidated(model.getIsValidated())
+                    .validatedAt(model.getValidatedAt())
+                    .build();
 
     JGrade saved = gradeRepository.save(entity);
     return GradeMapper.toModel(saved);
