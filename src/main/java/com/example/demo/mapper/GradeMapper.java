@@ -2,17 +2,18 @@ package com.example.demo.mapper;
 
 import com.example.demo.entity.JGrade;
 import com.example.demo.model.Grade;
-import org.springframework.stereotype.Component;
 
-@Component
 public class GradeMapper {
-  public Grade toModel(JGrade entity) {
+  public static Grade toModel(JGrade entity) {
     if (entity == null) return null;
     return Grade.builder()
         .id(entity.getId())
+        .student(StudentMapper.toModel(entity.getStudent()))
+        .exam(ExamMapper.toModel(entity.getExam()))
         .score(entity.getScore())
-        .studentId(entity.getStudent() != null ? entity.getStudent().getId() : null)
-        .examId(entity.getExam() != null ? entity.getExam().getId() : null)
+        .weightedScore(entity.getWeightedScore())
+        .isValidated(entity.getIsValidated())
+        .validatedAt(entity.getValidatedAt())
         .build();
   }
 }

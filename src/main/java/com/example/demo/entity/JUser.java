@@ -1,6 +1,9 @@
 package com.example.demo.entity;
 
+import com.example.demo.enums.StatusEnum;
+import com.example.demo.enums.UserRole;
 import jakarta.persistence.*;
+import java.time.Instant;
 import lombok.*;
 
 @Entity
@@ -8,8 +11,8 @@ import lombok.*;
 @Getter
 @Setter
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class JUser {
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
@@ -21,6 +24,13 @@ public class JUser {
   @Column(nullable = false)
   private String password;
 
+  @Enumerated(EnumType.STRING)
   @Column(nullable = false)
-  private String role;
+  private UserRole role;
+
+  @Column(name = "created_at")
+  private Instant createdAt;
+
+  @Enumerated(EnumType.STRING)
+  private StatusEnum status;
 }

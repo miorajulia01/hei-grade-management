@@ -1,13 +1,18 @@
 package com.example.demo.model;
 
+import java.time.Instant;
 import lombok.*;
 
-@Data
+@Getter
+@Setter
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class GroupAssignment {
   private String id;
-  private String studentId;
-  private String groupId;
+  private Student student;
+  private Group group;
+  private Semester semester;
+  private Instant assignedAt;
+  private Boolean isActive;
 }

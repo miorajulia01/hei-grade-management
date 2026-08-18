@@ -1,14 +1,19 @@
 package com.example.demo.model;
 
+import java.time.Instant;
 import lombok.*;
 
-@Data
+@Getter
+@Setter
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class Grade {
   private String id;
+  private Student student;
+  private Exam exam;
   private Double score;
-  private String studentId;
-  private String examId;
+  private Double weightedScore;
+  private Boolean isValidated;
+  private Instant validatedAt;
 }

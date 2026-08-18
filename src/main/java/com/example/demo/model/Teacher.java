@@ -1,14 +1,18 @@
 package com.example.demo.model;
 
+import com.example.demo.enums.StatusEnum;
 import lombok.*;
 
-@Data
+@Getter
+@Setter
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class Teacher {
   private String id;
+  private User user;
   private String firstName;
   private String lastName;
-  private String email;
+  private String specialty;
+  private StatusEnum status;
 }

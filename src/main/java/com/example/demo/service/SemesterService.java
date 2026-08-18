@@ -1,43 +1,55 @@
 package com.example.demo.service;
 
+import com.example.demo.entity.JAcademicYear;
 import com.example.demo.entity.JSemester;
 import com.example.demo.mapper.SemesterMapper;
 import com.example.demo.model.Semester;
+import com.example.demo.repository.AcademicYearRepository;
 import com.example.demo.repository.SemesterRepository;
 import java.util.List;
-import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@RequiredArgsConstructor
 public class SemesterService {
 
   private final SemesterRepository semesterRepository;
-  private final SemesterMapper semesterMapper;
+  private final AcademicYearRepository academicYearRepository;
 
-  public SemesterService(SemesterRepository semesterRepository, SemesterMapper semesterMapper) {
-    this.semesterRepository = semesterRepository;
-    this.semesterMapper = semesterMapper;
+  public List<Semester> getAllSemesters() {
+    return semesterRepository.findAll().stream().map(SemesterMapper::toModel).toList();
   }
 
-  @Transactional(readOnly = true)
-  public List<Semester> getSemesters(String name) {
-    List<JSemester> entities;
+  public Semester getSemesterById(String id) {
+    JSemester entity =
+        semesterRepository
+            .findById(id)
+            .orElseThrow(() -> new RuntimeException("Semester not found with id: " + id));
+    return SemesterMapper.toModel(entity);
+  }
 
-    if (name != null && !name.isBlank()) {
-      entities = semesterRepository.findByName(name).map(List::of).orElse(List.of());
-    } else {
-      entities = semesterRepository.findAll();
+  public Semester saveSemester(Semester model) {
+    JAcademicYear academicYear = null;
+    if (model.getAcademicYear() != null && model.getAcademicYear().getId() != null) {
+      academicYear =
+          academicYearRepository
+              .findById(model.getAcademicYear().getId())
+              .orElseThrow(() -> new RuntimeException("Academic year not found"));
     }
 
-    return entities.stream().map(semesterMapper::toModel).collect(Collectors.toList());
-  }
+    JSemester entity =
+        JSemester.builder()
+            .id(model.getId())
+            .academicYear(academicYear)
+            .code(model.getCode())
+            .label(model.getLabel())
+            .order(model.getOrder())
+            .startDate(model.getStartDate())
+            .endDate(model.getEndDate())
+            .build();
 
-  @Transactional(readOnly = true)
-  public Semester getSemesterById(String id) {
-    return semesterRepository
-        .findById(id)
-        .map(semesterMapper::toModel)
-        .orElseThrow(() -> new IllegalArgumentException("Semester not found with ID: " + id));
+    JSemester saved = semesterRepository.save(entity);
+    return SemesterMapper.toModel(saved);
   }
 }

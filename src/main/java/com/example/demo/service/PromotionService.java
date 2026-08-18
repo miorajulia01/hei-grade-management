@@ -1,44 +1,52 @@
 package com.example.demo.service;
 
+import com.example.demo.entity.JAcademicYear;
 import com.example.demo.entity.JPromotion;
 import com.example.demo.mapper.PromotionMapper;
 import com.example.demo.model.Promotion;
+import com.example.demo.repository.AcademicYearRepository;
 import com.example.demo.repository.PromotionRepository;
 import java.util.List;
-import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@RequiredArgsConstructor
 public class PromotionService {
 
   private final PromotionRepository promotionRepository;
-  private final PromotionMapper promotionMapper;
+  private final AcademicYearRepository academicYearRepository;
 
-  public PromotionService(
-      PromotionRepository promotionRepository, PromotionMapper promotionMapper) {
-    this.promotionRepository = promotionRepository;
-    this.promotionMapper = promotionMapper;
+  public List<Promotion> getAllPromotions() {
+    return promotionRepository.findAll().stream().map(PromotionMapper::toModel).toList();
   }
 
-  @Transactional(readOnly = true)
-  public List<Promotion> getPromotions(String name) {
-    List<JPromotion> entities;
+  public Promotion getPromotionById(String id) {
+    JPromotion entity =
+        promotionRepository
+            .findById(id)
+            .orElseThrow(() -> new RuntimeException("Promotion not found with id: " + id));
+    return PromotionMapper.toModel(entity);
+  }
 
-    if (name != null && !name.isBlank()) {
-      entities = promotionRepository.findByNameContainingIgnoreCase(name);
-    } else {
-      entities = promotionRepository.findAll();
+  public Promotion savePromotion(Promotion model) {
+    JAcademicYear academicYear = null;
+    if (model.getAcademicYear() != null && model.getAcademicYear().getId() != null) {
+      academicYear =
+          academicYearRepository
+              .findById(model.getAcademicYear().getId())
+              .orElseThrow(() -> new RuntimeException("Academic year not found"));
     }
 
-    return entities.stream().map(promotionMapper::toModel).collect(Collectors.toList());
-  }
+    JPromotion entity =
+        JPromotion.builder()
+            .id(model.getId())
+            .academicYear(academicYear)
+            .ref(model.getRef())
+            .label(model.getLabel())
+            .build();
 
-  @Transactional(readOnly = true)
-  public Promotion getPromotionById(String id) {
-    return promotionRepository
-        .findById(id)
-        .map(promotionMapper::toModel)
-        .orElseThrow(() -> new IllegalArgumentException("Promotion not found with ID: " + id));
+    JPromotion saved = promotionRepository.save(entity);
+    return PromotionMapper.toModel(saved);
   }
 }

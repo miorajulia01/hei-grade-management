@@ -4,17 +4,22 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "parcours")
+@Table(name = "program")
 @Getter
 @Setter
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
-public class JParcours {
+@AllArgsConstructor
+public class JProgram {
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
   private String id;
 
   @Column(nullable = false)
-  private String name;
+  private String code;
+
+  @Column(nullable = false)
+  private String label;
+
+  private String description;
 }

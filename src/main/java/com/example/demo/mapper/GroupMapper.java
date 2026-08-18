@@ -2,12 +2,15 @@ package com.example.demo.mapper;
 
 import com.example.demo.entity.JGroup;
 import com.example.demo.model.Group;
-import org.springframework.stereotype.Component;
 
-@Component
 public class GroupMapper {
-  public Group toModel(JGroup entity) {
+  public static Group toModel(JGroup entity) {
     if (entity == null) return null;
-    return Group.builder().id(entity.getId()).name(entity.getName()).build();
+    return Group.builder()
+        .id(entity.getId())
+        .ref(entity.getRef())
+        .capacity(entity.getCapacity())
+        .program(ProgramMapper.toModel(entity.getProgram()))
+        .build();
   }
 }

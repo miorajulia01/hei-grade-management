@@ -1,51 +1,63 @@
 package com.example.demo.service;
 
+import com.example.demo.entity.JPromotion;
 import com.example.demo.entity.JStudent;
+import com.example.demo.entity.JUser;
 import com.example.demo.mapper.StudentMapper;
 import com.example.demo.model.Student;
+import com.example.demo.repository.PromotionRepository;
 import com.example.demo.repository.StudentRepository;
+import com.example.demo.repository.UserRepository;
 import java.util.List;
-import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@RequiredArgsConstructor
 public class StudentService {
 
   private final StudentRepository studentRepository;
-  private final StudentMapper studentMapper;
+  private final UserRepository userRepository;
+  private final PromotionRepository promotionRepository;
 
-  public StudentService(StudentRepository studentRepository, StudentMapper studentMapper) {
-    this.studentRepository = studentRepository;
-    this.studentMapper = studentMapper;
+  public List<Student> getAllStudents() {
+    return studentRepository.findAll().stream().map(StudentMapper::toModel).toList();
   }
 
-  @Transactional(readOnly = true)
-  public List<Student> getStudents(
-      String firstName, String lastName, String studentNumber, String promotionId) {
-    List<JStudent> entities;
+  public Student getStudentById(String id) {
+    JStudent entity =
+        studentRepository
+            .findById(id)
+            .orElseThrow(() -> new RuntimeException("Student not found with id: " + id));
+    return StudentMapper.toModel(entity);
+  }
 
-    if (studentNumber != null && !studentNumber.isBlank()) {
-      entities =
-          studentRepository.findByStudentNumber(studentNumber).map(List::of).orElse(List.of());
-    } else if (lastName != null && !lastName.isBlank()) {
-      entities = studentRepository.findByLastNameContainingIgnoreCase(lastName);
-    } else if (firstName != null && !firstName.isBlank()) {
-      entities = studentRepository.findByFirstNameContainingIgnoreCase(firstName);
-    } else if (promotionId != null && !promotionId.isBlank()) {
-      entities = studentRepository.findByPromotionId(promotionId);
-    } else {
-      entities = studentRepository.findAll();
+  public Student saveStudent(Student model) {
+    JUser user = null;
+    if (model.getUser() != null && model.getUser().getId() != null) {
+      user =
+          userRepository
+              .findById(model.getUser().getId())
+              .orElseThrow(() -> new RuntimeException("User not found"));
     }
 
-    return entities.stream().map(studentMapper::toModel).collect(Collectors.toList());
-  }
+    JPromotion promotion = null;
+    if (model.getPromotion() != null && model.getPromotion().getId() != null) {
+      promotion =
+          promotionRepository
+              .findById(model.getPromotion().getId())
+              .orElseThrow(() -> new RuntimeException("Promotion not found"));
+    }
 
-  @Transactional(readOnly = true)
-  public Student getStudentById(String id) {
-    return studentRepository
-        .findById(id)
-        .map(studentMapper::toModel)
-        .orElseThrow(() -> new IllegalArgumentException("Student not found with ID: " + id));
+    JStudent entity =
+        JStudent.builder()
+            .id(model.getId())
+            .user(user)
+            .promotion(promotion)
+            .studentNumber(model.getStudentNumber())
+            .build();
+
+    JStudent saved = studentRepository.save(entity);
+    return StudentMapper.toModel(saved);
   }
 }

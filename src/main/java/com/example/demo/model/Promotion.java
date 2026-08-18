@@ -2,11 +2,14 @@ package com.example.demo.model;
 
 import lombok.*;
 
-@Data
+@Getter
+@Setter
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class Promotion {
   private String id;
-  private String name;
+  private AcademicYear academicYear;
+  private String ref;
+  private String label;
 }

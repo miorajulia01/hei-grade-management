@@ -8,13 +8,20 @@ import lombok.*;
 @Getter
 @Setter
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class JPromotion {
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
   private String id;
 
-  @Column(nullable = false, unique = true)
-  private String name;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "academic_year_id")
+  private JAcademicYear academicYear;
+
+  @Column(nullable = false)
+  private String ref;
+
+  @Column(nullable = false)
+  private String label;
 }

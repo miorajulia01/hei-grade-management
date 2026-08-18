@@ -8,13 +8,19 @@ import lombok.*;
 @Getter
 @Setter
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class JGroup {
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
   private String id;
 
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "program_id")
+  private JProgram program;
+
   @Column(nullable = false)
-  private String name;
+  private String ref;
+
+  private Integer capacity;
 }

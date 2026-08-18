@@ -9,30 +9,30 @@ import lombok.*;
 @Getter
 @Setter
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class JGradeHistory {
+
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
   private String id;
 
-  @Column(name = "old_score", nullable = false)
-  private Double oldScore;
-
-  @Column(name = "new_score", nullable = false)
-  private Double newScore;
-
-  @Column(nullable = false)
-  private String reason;
-
-  @Column(name = "updated_at", nullable = false)
-  private Instant updatedAt;
-
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "grade_id", nullable = false)
+  @JoinColumn(name = "grade_id")
   private JGrade grade;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "teacher_id", nullable = false)
+  @JoinColumn(name = "teacher_id")
   private JTeacher teacher;
+
+  @Column(name = "old_score")
+  private Double oldScore;
+
+  @Column(name = "new_score")
+  private Double newScore;
+
+  private String reason;
+
+  @Column(name = "modified_at")
+  private Instant modifiedAt;
 }

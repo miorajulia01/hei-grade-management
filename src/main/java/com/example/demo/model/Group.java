@@ -2,11 +2,14 @@ package com.example.demo.model;
 
 import lombok.*;
 
-@Data
+@Getter
+@Setter
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class Group {
   private String id;
-  private String name;
+  private Program program;
+  private String ref;
+  private Integer capacity;
 }

@@ -10,9 +10,11 @@ import org.springframework.stereotype.Repository;
 public interface StudentRepository extends JpaRepository<JStudent, String> {
   Optional<JStudent> findByStudentNumber(String studentNumber);
 
+  Optional<JStudent> findByEmailIgnoreCase(String email);
+
+  Optional<JStudent> findByUserId(String userId);
+
   List<JStudent> findByPromotionId(String promotionId);
 
-  List<JStudent> findByLastNameContainingIgnoreCase(String lastName);
-
-  List<JStudent> findByFirstNameContainingIgnoreCase(String firstName);
+  List<JStudent> findByLastNameIgnoreCaseContaining(String lastName);
 }

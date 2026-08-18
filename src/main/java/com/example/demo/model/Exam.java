@@ -1,14 +1,20 @@
 package com.example.demo.model;
 
+import java.time.Instant;
 import lombok.*;
 
-@Data
+@Getter
+@Setter
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class Exam {
   private String id;
+  private Course course;
+  private String type;
   private String title;
+  private Instant dateExam;
   private Double coefficient;
-  private String courseId;
+  private Integer order;
+  private Boolean isPublished;
 }

@@ -2,19 +2,20 @@ package com.example.demo.mapper;
 
 import com.example.demo.entity.JStudent;
 import com.example.demo.model.Student;
-import org.springframework.stereotype.Component;
 
-@Component
 public class StudentMapper {
-  public Student toModel(JStudent entity) {
+  public static Student toModel(JStudent entity) {
     if (entity == null) return null;
     return Student.builder()
         .id(entity.getId())
+        .promotion(PromotionMapper.toModel(entity.getPromotion()))
+        .user(UserMapper.toModel(entity.getUser()))
         .studentNumber(entity.getStudentNumber())
         .firstName(entity.getFirstName())
         .lastName(entity.getLastName())
-        .email(entity.getUser() != null ? entity.getUser().getEmail() : null)
-        .promotionName(entity.getPromotion() != null ? entity.getPromotion().getName() : null)
+        .email(entity.getEmail())
+        .status(entity.getStatus())
+        .dateEnroll(entity.getDateEnroll())
         .build();
   }
 }

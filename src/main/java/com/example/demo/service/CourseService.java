@@ -1,45 +1,66 @@
 package com.example.demo.service;
 
 import com.example.demo.entity.JCourse;
+import com.example.demo.entity.JProgram;
+import com.example.demo.entity.JSemester;
 import com.example.demo.mapper.CourseMapper;
 import com.example.demo.model.Course;
 import com.example.demo.repository.CourseRepository;
+import com.example.demo.repository.ProgramRepository;
+import com.example.demo.repository.SemesterRepository;
 import java.util.List;
-import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@RequiredArgsConstructor
 public class CourseService {
 
   private final CourseRepository courseRepository;
-  private final CourseMapper courseMapper;
+  private final ProgramRepository programRepository;
+  private final SemesterRepository semesterRepository;
 
-  public CourseService(CourseRepository courseRepository, CourseMapper courseMapper) {
-    this.courseRepository = courseRepository;
-    this.courseMapper = courseMapper;
+  public List<Course> getAllCourses() {
+    return courseRepository.findAll().stream().map(CourseMapper::toModel).toList();
   }
 
-  @Transactional(readOnly = true)
-  public List<Course> getCourses(String code, String name) {
-    List<JCourse> entities;
+  public Course getCourseById(String id) {
+    JCourse entity =
+        courseRepository
+            .findById(id)
+            .orElseThrow(() -> new RuntimeException("Course not found with id: " + id));
+    return CourseMapper.toModel(entity);
+  }
 
-    if (code != null && !code.isBlank()) {
-      entities = courseRepository.findByCode(code).map(List::of).orElse(List.of());
-    } else if (name != null && !name.isBlank()) {
-      entities = courseRepository.findByNameContainingIgnoreCase(name);
-    } else {
-      entities = courseRepository.findAll();
+  public Course saveCourse(Course model) {
+    JProgram program = null;
+    if (model.getProgram() != null && model.getProgram().getId() != null) {
+      program =
+          programRepository
+              .findById(model.getProgram().getId())
+              .orElseThrow(() -> new RuntimeException("Program not found"));
     }
 
-    return entities.stream().map(courseMapper::toModel).collect(Collectors.toList());
-  }
+    JSemester semester = null;
+    if (model.getSemester() != null && model.getSemester().getId() != null) {
+      semester =
+          semesterRepository
+              .findById(model.getSemester().getId())
+              .orElseThrow(() -> new RuntimeException("Semester not found"));
+    }
 
-  @Transactional(readOnly = true)
-  public Course getCourseById(String id) {
-    return courseRepository
-        .findById(id)
-        .map(courseMapper::toModel)
-        .orElseThrow(() -> new IllegalArgumentException("Course not found with ID: " + id));
+    JCourse entity =
+        JCourse.builder()
+            .id(model.getId())
+            .ref(model.getRef())
+            .title(model.getTitle())
+            .credit(model.getCredit())
+            .program(program)
+            .semester(semester)
+            .isActive(model.getIsActive())
+            .build();
+
+    JCourse saved = courseRepository.save(entity);
+    return CourseMapper.toModel(saved);
   }
 }
