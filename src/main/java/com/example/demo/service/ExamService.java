@@ -6,6 +6,7 @@ import com.example.demo.mapper.ExamMapper;
 import com.example.demo.model.Exam;
 import com.example.demo.repository.CourseRepository;
 import com.example.demo.repository.ExamRepository;
+import com.example.demo.validator.ExamValidator;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -30,6 +31,8 @@ public class ExamService {
   }
 
   public Exam saveExam(Exam model) {
+    ExamValidator.validate(model);
+
     JCourse course = null;
     if (model.getCourse() != null && model.getCourse().getId() != null) {
       course =

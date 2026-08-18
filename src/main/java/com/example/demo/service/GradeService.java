@@ -8,6 +8,7 @@ import com.example.demo.model.Grade;
 import com.example.demo.repository.ExamRepository;
 import com.example.demo.repository.GradeRepository;
 import com.example.demo.repository.StudentRepository;
+import com.example.demo.validator.GradeValidator;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -33,6 +34,8 @@ public class GradeService {
   }
 
   public Grade saveGrade(Grade model) {
+    GradeValidator.validate(model);
+
     JStudent student = null;
     if (model.getStudent() != null && model.getStudent().getId() != null) {
       student =
@@ -56,11 +59,34 @@ public class GradeService {
             .exam(exam)
             .score(model.getScore())
             .weightedScore(model.getWeightedScore())
-            .isValidated(model.getIsValidated())
+            .isValidated(!GradeValidator.isRetake(model.getScore()))
             .validatedAt(model.getValidatedAt())
             .build();
 
     JGrade saved = gradeRepository.save(entity);
     return GradeMapper.toModel(saved);
+  }
+
+  public Double calculateWeightedAverage(String studentId) {
+    List<JGrade> grades = gradeRepository.findByStudentId(studentId);
+    double totalWeightedPoints = 0.0;
+    double totalCoefficients = 0.0;
+
+    for (JGrade grade : grades) {
+      if (grade.getExam() != null) {
+        double coef = grade.getExam().getCoefficient();
+        totalWeightedPoints += (grade.getScore() * coef);
+        totalCoefficients += coef;
+      }
+    }
+
+    return totalCoefficients == 0 ? 0.0 : (totalWeightedPoints / totalCoefficients);
+  }
+
+  public List<Grade> getRetakeGradesForStudent(String studentId) {
+    return gradeRepository.findByStudentId(studentId).stream()
+        .filter(grade -> GradeValidator.isRetake(grade.getScore()))
+        .map(GradeMapper::toModel)
+        .toList();
   }
 }

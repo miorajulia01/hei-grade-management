@@ -8,6 +8,7 @@ import com.example.demo.model.GradeHistory;
 import com.example.demo.repository.GradeHistoryRepository;
 import com.example.demo.repository.GradeRepository;
 import com.example.demo.repository.TeacherRepository;
+import com.example.demo.validator.GradeValidator;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -33,6 +34,8 @@ public class GradeHistoryService {
   }
 
   public GradeHistory saveGradeHistory(GradeHistory model) {
+    GradeValidator.validateUpdate(model.getNewScore(), model.getReason());
+
     JGrade grade = null;
     if (model.getGrade() != null && model.getGrade().getId() != null) {
       grade =
