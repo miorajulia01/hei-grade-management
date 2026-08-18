@@ -16,6 +16,11 @@ public final class GradeValidator {
     }
   }
 
+  public static boolean isRetake(Double score) {
+    validateScore(score);
+    return score < 10.0;
+  }
+
   public static void validate(Grade grade) {
     if (grade == null) {
       throw new IllegalArgumentException("Grade cannot be null");
