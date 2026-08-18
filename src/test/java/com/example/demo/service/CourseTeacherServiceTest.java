@@ -24,246 +24,181 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class CourseTeacherServiceTest {
 
-    @Mock
-    private CourseTeacherRepository courseTeacherRepository;
+  @Mock private CourseTeacherRepository courseTeacherRepository;
 
-    @Mock
-    private CourseRepository courseRepository;
+  @Mock private CourseRepository courseRepository;
 
-    @Mock
-    private TeacherRepository teacherRepository;
+  @Mock private TeacherRepository teacherRepository;
 
-    @InjectMocks
-    private CourseTeacherService courseTeacherService;
+  @InjectMocks private CourseTeacherService courseTeacherService;
 
-    private JCourseTeacher courseTeacherEntity;
-    private CourseTeacher courseTeacherModel;
+  private JCourseTeacher courseTeacherEntity;
+  private CourseTeacher courseTeacherModel;
 
-    @BeforeEach
-    void setUp() {
-        courseTeacherEntity =
-                JCourseTeacher.builder()
-                        .isPrimary(true)
-                        .build();
+  @BeforeEach
+  void setUp() {
+    courseTeacherEntity = JCourseTeacher.builder().isPrimary(true).build();
 
-        courseTeacherModel =
-                CourseTeacher.builder()
-                        .isPrimary(true)
-                        .build();
-    }
+    courseTeacherModel = CourseTeacher.builder().isPrimary(true).build();
+  }
 
-    @Test
-    void shouldGetAllCourseTeachers() {
-        when(courseTeacherRepository.findAll())
-                .thenReturn(List.of(courseTeacherEntity));
+  @Test
+  void shouldGetAllCourseTeachers() {
+    when(courseTeacherRepository.findAll()).thenReturn(List.of(courseTeacherEntity));
 
-        List<CourseTeacher> result =
-                courseTeacherService.getAllCourseTeachers();
+    List<CourseTeacher> result = courseTeacherService.getAllCourseTeachers();
 
-        assertNotNull(result);
-        assertEquals(1, result.size());
-        assertTrue(result.get(0).getIsPrimary());
+    assertNotNull(result);
+    assertEquals(1, result.size());
+    assertTrue(result.get(0).getIsPrimary());
 
-        verify(courseTeacherRepository).findAll();
-    }
+    verify(courseTeacherRepository).findAll();
+  }
 
-    @Test
-    void shouldSaveCourseTeacherWithoutRelations() {
-        when(courseTeacherRepository.save(any(JCourseTeacher.class)))
-                .thenReturn(courseTeacherEntity);
+  @Test
+  void shouldSaveCourseTeacherWithoutRelations() {
+    when(courseTeacherRepository.save(any(JCourseTeacher.class))).thenReturn(courseTeacherEntity);
 
-        CourseTeacher result =
-                courseTeacherService.saveCourseTeacher(courseTeacherModel);
+    CourseTeacher result = courseTeacherService.saveCourseTeacher(courseTeacherModel);
 
-        assertNotNull(result);
-        assertTrue(result.getIsPrimary());
+    assertNotNull(result);
+    assertTrue(result.getIsPrimary());
 
-        ArgumentCaptor<JCourseTeacher> captor =
-                ArgumentCaptor.forClass(JCourseTeacher.class);
+    ArgumentCaptor<JCourseTeacher> captor = ArgumentCaptor.forClass(JCourseTeacher.class);
 
-        verify(courseTeacherRepository).save(captor.capture());
+    verify(courseTeacherRepository).save(captor.capture());
 
-        JCourseTeacher savedEntity = captor.getValue();
+    JCourseTeacher savedEntity = captor.getValue();
 
-        assertTrue(savedEntity.getIsPrimary());
-        assertNull(savedEntity.getCourse());
-        assertNull(savedEntity.getTeacher());
-    }
+    assertTrue(savedEntity.getIsPrimary());
+    assertNull(savedEntity.getCourse());
+    assertNull(savedEntity.getTeacher());
+  }
 
-    @Test
-    void shouldSaveCourseTeacherWithCourse() {
-        JCourse course =
-                JCourse.builder()
-                        .id("course-1")
-                        .ref("JAVA")
-                        .title("Java Programming")
-                        .build();
+  @Test
+  void shouldSaveCourseTeacherWithCourse() {
+    JCourse course = JCourse.builder().id("course-1").ref("JAVA").title("Java Programming").build();
 
-        CourseTeacher model =
-                CourseTeacher.builder()
-                        .isPrimary(true)
-                        .course(
-                                com.example.demo.model.Course.builder()
-                                        .id("course-1")
-                                        .build())
-                        .build();
+    CourseTeacher model =
+        CourseTeacher.builder()
+            .isPrimary(true)
+            .course(com.example.demo.model.Course.builder().id("course-1").build())
+            .build();
 
-        when(courseRepository.findById("course-1"))
-                .thenReturn(Optional.of(course));
+    when(courseRepository.findById("course-1")).thenReturn(Optional.of(course));
 
-        when(courseTeacherRepository.save(any(JCourseTeacher.class)))
-                .thenReturn(courseTeacherEntity);
+    when(courseTeacherRepository.save(any(JCourseTeacher.class))).thenReturn(courseTeacherEntity);
 
-        courseTeacherService.saveCourseTeacher(model);
+    courseTeacherService.saveCourseTeacher(model);
 
-        ArgumentCaptor<JCourseTeacher> captor =
-                ArgumentCaptor.forClass(JCourseTeacher.class);
+    ArgumentCaptor<JCourseTeacher> captor = ArgumentCaptor.forClass(JCourseTeacher.class);
 
-        verify(courseTeacherRepository).save(captor.capture());
+    verify(courseTeacherRepository).save(captor.capture());
 
-        JCourseTeacher savedEntity = captor.getValue();
+    JCourseTeacher savedEntity = captor.getValue();
 
-        assertEquals(course, savedEntity.getCourse());
+    assertEquals(course, savedEntity.getCourse());
 
-        verify(courseRepository).findById("course-1");
-    }
+    verify(courseRepository).findById("course-1");
+  }
 
-    @Test
-    void shouldSaveCourseTeacherWithTeacher() {
-        JTeacher teacher =
-                JTeacher.builder()
-                        .id("teacher-1")
-                        .build();
+  @Test
+  void shouldSaveCourseTeacherWithTeacher() {
+    JTeacher teacher = JTeacher.builder().id("teacher-1").build();
 
-        CourseTeacher model =
-                CourseTeacher.builder()
-                        .isPrimary(true)
-                        .teacher(
-                                com.example.demo.model.Teacher.builder()
-                                        .id("teacher-1")
-                                        .build())
-                        .build();
+    CourseTeacher model =
+        CourseTeacher.builder()
+            .isPrimary(true)
+            .teacher(com.example.demo.model.Teacher.builder().id("teacher-1").build())
+            .build();
 
-        when(teacherRepository.findById("teacher-1"))
-                .thenReturn(Optional.of(teacher));
+    when(teacherRepository.findById("teacher-1")).thenReturn(Optional.of(teacher));
 
-        when(courseTeacherRepository.save(any(JCourseTeacher.class)))
-                .thenReturn(courseTeacherEntity);
+    when(courseTeacherRepository.save(any(JCourseTeacher.class))).thenReturn(courseTeacherEntity);
 
-        courseTeacherService.saveCourseTeacher(model);
+    courseTeacherService.saveCourseTeacher(model);
 
-        ArgumentCaptor<JCourseTeacher> captor =
-                ArgumentCaptor.forClass(JCourseTeacher.class);
+    ArgumentCaptor<JCourseTeacher> captor = ArgumentCaptor.forClass(JCourseTeacher.class);
 
-        verify(courseTeacherRepository).save(captor.capture());
+    verify(courseTeacherRepository).save(captor.capture());
 
-        JCourseTeacher savedEntity = captor.getValue();
+    JCourseTeacher savedEntity = captor.getValue();
 
-        assertEquals(teacher, savedEntity.getTeacher());
+    assertEquals(teacher, savedEntity.getTeacher());
 
-        verify(teacherRepository).findById("teacher-1");
-    }
+    verify(teacherRepository).findById("teacher-1");
+  }
 
-    @Test
-    void shouldSaveCourseTeacherWithCourseAndTeacher() {
-        JCourse course =
-                JCourse.builder()
-                        .id("course-1")
-                        .ref("JAVA")
-                        .title("Java Programming")
-                        .build();
+  @Test
+  void shouldSaveCourseTeacherWithCourseAndTeacher() {
+    JCourse course = JCourse.builder().id("course-1").ref("JAVA").title("Java Programming").build();
 
-        JTeacher teacher =
-                JTeacher.builder()
-                        .id("teacher-1")
-                        .build();
+    JTeacher teacher = JTeacher.builder().id("teacher-1").build();
 
-        CourseTeacher model =
-                CourseTeacher.builder()
-                        .isPrimary(true)
-                        .course(
-                                com.example.demo.model.Course.builder()
-                                        .id("course-1")
-                                        .build())
-                        .teacher(
-                                com.example.demo.model.Teacher.builder()
-                                        .id("teacher-1")
-                                        .build())
-                        .build();
+    CourseTeacher model =
+        CourseTeacher.builder()
+            .isPrimary(true)
+            .course(com.example.demo.model.Course.builder().id("course-1").build())
+            .teacher(com.example.demo.model.Teacher.builder().id("teacher-1").build())
+            .build();
 
-        when(courseRepository.findById("course-1"))
-                .thenReturn(Optional.of(course));
+    when(courseRepository.findById("course-1")).thenReturn(Optional.of(course));
 
-        when(teacherRepository.findById("teacher-1"))
-                .thenReturn(Optional.of(teacher));
+    when(teacherRepository.findById("teacher-1")).thenReturn(Optional.of(teacher));
 
-        when(courseTeacherRepository.save(any(JCourseTeacher.class)))
-                .thenReturn(courseTeacherEntity);
+    when(courseTeacherRepository.save(any(JCourseTeacher.class))).thenReturn(courseTeacherEntity);
 
-        courseTeacherService.saveCourseTeacher(model);
+    courseTeacherService.saveCourseTeacher(model);
 
-        ArgumentCaptor<JCourseTeacher> captor =
-                ArgumentCaptor.forClass(JCourseTeacher.class);
+    ArgumentCaptor<JCourseTeacher> captor = ArgumentCaptor.forClass(JCourseTeacher.class);
 
-        verify(courseTeacherRepository).save(captor.capture());
+    verify(courseTeacherRepository).save(captor.capture());
 
-        JCourseTeacher savedEntity = captor.getValue();
+    JCourseTeacher savedEntity = captor.getValue();
 
-        assertEquals(course, savedEntity.getCourse());
-        assertEquals(teacher, savedEntity.getTeacher());
-        assertTrue(savedEntity.getIsPrimary());
+    assertEquals(course, savedEntity.getCourse());
+    assertEquals(teacher, savedEntity.getTeacher());
+    assertTrue(savedEntity.getIsPrimary());
 
-        verify(courseRepository).findById("course-1");
-        verify(teacherRepository).findById("teacher-1");
-    }
+    verify(courseRepository).findById("course-1");
+    verify(teacherRepository).findById("teacher-1");
+  }
 
-    @Test
-    void shouldThrowExceptionWhenCourseNotFound() {
-        CourseTeacher model =
-                CourseTeacher.builder()
-                        .isPrimary(true)
-                        .course(
-                                com.example.demo.model.Course.builder()
-                                        .id("unknown")
-                                        .build())
-                        .build();
+  @Test
+  void shouldThrowExceptionWhenCourseNotFound() {
+    CourseTeacher model =
+        CourseTeacher.builder()
+            .isPrimary(true)
+            .course(com.example.demo.model.Course.builder().id("unknown").build())
+            .build();
 
-        when(courseRepository.findById("unknown"))
-                .thenReturn(Optional.empty());
+    when(courseRepository.findById("unknown")).thenReturn(Optional.empty());
 
-        RuntimeException exception =
-                assertThrows(
-                        RuntimeException.class,
-                        () -> courseTeacherService.saveCourseTeacher(model));
+    RuntimeException exception =
+        assertThrows(RuntimeException.class, () -> courseTeacherService.saveCourseTeacher(model));
 
-        assertEquals("Course not found", exception.getMessage());
+    assertEquals("Course not found", exception.getMessage());
 
-        verify(courseRepository).findById("unknown");
-        verify(courseTeacherRepository, never()).save(any());
-    }
+    verify(courseRepository).findById("unknown");
+    verify(courseTeacherRepository, never()).save(any());
+  }
 
-    @Test
-    void shouldThrowExceptionWhenTeacherNotFound() {
-        CourseTeacher model =
-                CourseTeacher.builder()
-                        .isPrimary(true)
-                        .teacher(
-                                com.example.demo.model.Teacher.builder()
-                                        .id("unknown")
-                                        .build())
-                        .build();
+  @Test
+  void shouldThrowExceptionWhenTeacherNotFound() {
+    CourseTeacher model =
+        CourseTeacher.builder()
+            .isPrimary(true)
+            .teacher(com.example.demo.model.Teacher.builder().id("unknown").build())
+            .build();
 
-        when(teacherRepository.findById("unknown"))
-                .thenReturn(Optional.empty());
+    when(teacherRepository.findById("unknown")).thenReturn(Optional.empty());
 
-        RuntimeException exception =
-                assertThrows(
-                        RuntimeException.class,
-                        () -> courseTeacherService.saveCourseTeacher(model));
+    RuntimeException exception =
+        assertThrows(RuntimeException.class, () -> courseTeacherService.saveCourseTeacher(model));
 
-        assertEquals("Teacher not found", exception.getMessage());
+    assertEquals("Teacher not found", exception.getMessage());
 
-        verify(teacherRepository).findById("unknown");
-        verify(courseTeacherRepository, never()).save(any());
-    }
+    verify(teacherRepository).findById("unknown");
+    verify(courseTeacherRepository, never()).save(any());
+  }
 }
