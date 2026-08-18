@@ -35,10 +35,7 @@ public class DiplomaService {
     }
 
     public boolean isGraduate(String studentId) {
-        double average = studentProgressionService.calculateAverage(studentId);
-        int credits = studentProgressionService.calculateValidatedCredits(studentId);
-
-        return average >= 10.0 && credits >= 180;
+        return studentProgressionService.hasGraduated(studentId);
     }
 
     private Diploma toDiploma(JStudent student) {
