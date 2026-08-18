@@ -13,4 +13,14 @@ public class CourseTeacherMapper {
         .isPrimary(entity.getIsPrimary())
         .build();
   }
+
+  public static JCourseTeacher toEntity(CourseTeacher model) {
+    if (model == null) return null;
+    return JCourseTeacher.builder()
+        .course(CourseMapper.toEntity(model.getCourse()))
+        .teacher(TeacherMapper.toEntity(model.getTeacher()))
+        .assignedAt(model.getAssignedAt())
+        .isPrimary(model.getIsPrimary())
+        .build();
+  }
 }

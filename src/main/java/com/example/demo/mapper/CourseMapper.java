@@ -17,4 +17,18 @@ public class CourseMapper {
         .isActive(entity.getIsActive())
         .build();
   }
+
+  public static JCourse toEntity(Course model) {
+    if (model == null) return null;
+    return JCourse.builder()
+        .id(model.getId())
+        .semester(SemesterMapper.toEntity(model.getSemester()))
+        .program(ProgramMapper.toEntity(model.getProgram()))
+        .ref(model.getRef())
+        .title(model.getTitle())
+        .credit(model.getCredit())
+        .type(model.getType())
+        .isActive(model.getIsActive())
+        .build();
+  }
 }

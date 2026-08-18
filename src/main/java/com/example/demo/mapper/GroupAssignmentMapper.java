@@ -15,4 +15,16 @@ public class GroupAssignmentMapper {
         .isActive(entity.getIsActive())
         .build();
   }
+
+  public static JGroupAssignment toEntity(GroupAssignment model) {
+    if (model == null) return null;
+    return JGroupAssignment.builder()
+        .id(model.getId())
+        .student(StudentMapper.toEntity(model.getStudent()))
+        .group(GroupMapper.toEntity(model.getGroup()))
+        .semester(SemesterMapper.toEntity(model.getSemester()))
+        .assignedAt(model.getAssignedAt())
+        .isActive(model.getIsActive())
+        .build();
+  }
 }

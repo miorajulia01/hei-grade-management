@@ -16,4 +16,17 @@ public class GradeMapper {
         .validatedAt(entity.getValidatedAt())
         .build();
   }
+
+  public static JGrade toEntity(Grade model) {
+    if (model == null) return null;
+    return JGrade.builder()
+        .id(model.getId())
+        .student(StudentMapper.toEntity(model.getStudent()))
+        .exam(ExamMapper.toEntity(model.getExam()))
+        .score(model.getScore())
+        .weightedScore(model.getWeightedScore())
+        .isValidated(model.getIsValidated())
+        .validatedAt(model.getValidatedAt())
+        .build();
+  }
 }

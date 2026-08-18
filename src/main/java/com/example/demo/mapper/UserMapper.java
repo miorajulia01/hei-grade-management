@@ -15,4 +15,16 @@ public class UserMapper {
         .status(entity.getStatus())
         .build();
   }
+
+  public static JUser toEntity(User model) {
+    if (model == null) return null;
+    return JUser.builder()
+        .id(model.getId())
+        .email(model.getEmail())
+        .password(model.getPassword())
+        .role(model.getRole())
+        .createdAt(model.getCreatedAt())
+        .status(model.getStatus())
+        .build();
+  }
 }

@@ -18,4 +18,19 @@ public class StudentMapper {
         .dateEnroll(entity.getDateEnroll())
         .build();
   }
+
+  public static JStudent toEntity(Student model) {
+    if (model == null) return null;
+    return JStudent.builder()
+        .id(model.getId())
+        .promotion(PromotionMapper.toEntity(model.getPromotion()))
+        .user(UserMapper.toEntity(model.getUser()))
+        .studentNumber(model.getStudentNumber())
+        .firstName(model.getFirstName())
+        .lastName(model.getLastName())
+        .email(model.getEmail())
+        .status(model.getStatus())
+        .dateEnroll(model.getDateEnroll())
+        .build();
+  }
 }

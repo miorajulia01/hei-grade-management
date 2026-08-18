@@ -15,4 +15,16 @@ public class TeacherMapper {
         .status(entity.getStatus())
         .build();
   }
+
+  public static JTeacher toEntity(Teacher model) {
+    if (model == null) return null;
+    return JTeacher.builder()
+        .id(model.getId())
+        .user(UserMapper.toEntity(model.getUser()))
+        .firstName(model.getFirstName())
+        .lastName(model.getLastName())
+        .specialty(model.getSpecialty())
+        .status(model.getStatus())
+        .build();
+  }
 }

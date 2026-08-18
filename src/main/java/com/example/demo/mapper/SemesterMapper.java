@@ -8,4 +8,9 @@ public class SemesterMapper {
     if (entity == null) return null;
     return Semester.builder().id(entity.getId()).code(entity.getCode()).build();
   }
+
+  public static JSemester toEntity(Semester model) {
+    if (model == null) return null;
+    return JSemester.builder().id(model.getId()).code(model.getCode()).build();
+  }
 }

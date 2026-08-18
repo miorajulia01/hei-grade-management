@@ -17,4 +17,18 @@ public class ExamMapper {
         .isPublished(entity.getIsPublished())
         .build();
   }
+
+  public static JExam toEntity(Exam model) {
+    if (model == null) return null;
+    return JExam.builder()
+        .id(model.getId())
+        .course(CourseMapper.toEntity(model.getCourse()))
+        .type(model.getType())
+        .title(model.getTitle())
+        .dateExam(model.getDateExam())
+        .coefficient(model.getCoefficient())
+        .order(model.getOrder())
+        .isPublished(model.getIsPublished())
+        .build();
+  }
 }

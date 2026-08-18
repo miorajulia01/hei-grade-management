@@ -13,4 +13,14 @@ public class GroupMapper {
         .program(ProgramMapper.toModel(entity.getProgram()))
         .build();
   }
+
+  public static JGroup toEntity(Group model) {
+    if (model == null) return null;
+    return JGroup.builder()
+        .id(model.getId())
+        .ref(model.getRef())
+        .capacity(model.getCapacity())
+        .program(ProgramMapper.toEntity(model.getProgram()))
+        .build();
+  }
 }
