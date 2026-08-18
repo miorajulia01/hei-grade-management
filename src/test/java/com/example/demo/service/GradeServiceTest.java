@@ -7,7 +7,9 @@ import static org.mockito.Mockito.*;
 import com.example.demo.entity.JExam;
 import com.example.demo.entity.JGrade;
 import com.example.demo.entity.JStudent;
+import com.example.demo.model.Exam;
 import com.example.demo.model.Grade;
+import com.example.demo.model.Student;
 import com.example.demo.repository.ExamRepository;
 import com.example.demo.repository.GradeRepository;
 import com.example.demo.repository.StudentRepository;
@@ -36,14 +38,54 @@ class GradeServiceTest {
     @InjectMocks
     private GradeService gradeService;
 
+    private JStudent studentEntity;
+    private Student studentModel;
+
+    private JExam examEntity;
+    private Exam examModel;
+
     private JGrade gradeEntity;
     private Grade gradeModel;
 
     @BeforeEach
     void setUp() {
+        studentEntity =
+                JStudent.builder()
+                        .id("student-1")
+                        .studentNumber("STD001")
+                        .build();
+
+        studentModel =
+                Student.builder()
+                        .id("student-1")
+                        .studentNumber("STD001")
+                        .build();
+
+        examEntity =
+                JExam.builder()
+                        .id("exam-1")
+                        .type("FINAL")
+                        .title("Final Exam")
+                        .coefficient(0.5)
+                        .order(1)
+                        .isPublished(true)
+                        .build();
+
+        examModel =
+                Exam.builder()
+                        .id("exam-1")
+                        .type("FINAL")
+                        .title("Final Exam")
+                        .coefficient(0.5)
+                        .order(1)
+                        .isPublished(true)
+                        .build();
+
         gradeEntity =
                 JGrade.builder()
                         .id("grade-1")
+                        .student(studentEntity)
+                        .exam(examEntity)
                         .score(15.0)
                         .weightedScore(7.5)
                         .isValidated(true)
@@ -52,6 +94,8 @@ class GradeServiceTest {
         gradeModel =
                 Grade.builder()
                         .id("grade-1")
+                        .student(studentModel)
+                        .exam(examModel)
                         .score(15.0)
                         .weightedScore(7.5)
                         .build();
@@ -66,6 +110,7 @@ class GradeServiceTest {
 
         assertNotNull(result);
         assertEquals(1, result.size());
+
         assertEquals("grade-1", result.get(0).getId());
         assertEquals(15.0, result.get(0).getScore());
 
@@ -104,7 +149,13 @@ class GradeServiceTest {
     }
 
     @Test
-    void shouldSaveGradeWithoutRelations() {
+    void shouldSaveGradeWithStudentAndExam() {
+        when(studentRepository.findById("student-1"))
+                .thenReturn(Optional.of(studentEntity));
+
+        when(examRepository.findById("exam-1"))
+                .thenReturn(Optional.of(examEntity));
+
         when(gradeRepository.save(any(JGrade.class)))
                 .thenReturn(gradeEntity);
 
@@ -122,140 +173,11 @@ class GradeServiceTest {
         JGrade savedEntity = captor.getValue();
 
         assertEquals("grade-1", savedEntity.getId());
+        assertEquals(studentEntity, savedEntity.getStudent());
+        assertEquals(examEntity, savedEntity.getExam());
         assertEquals(15.0, savedEntity.getScore());
         assertEquals(7.5, savedEntity.getWeightedScore());
-        assertTrue(savedEntity.getIsValidated());
 
-        assertNull(savedEntity.getStudent());
-        assertNull(savedEntity.getExam());
-    }
-
-    @Test
-    void shouldSaveGradeWithStudent() {
-        JStudent student =
-                JStudent.builder()
-                        .id("student-1")
-                        .studentNumber("STD001")
-                        .build();
-
-        Grade model =
-                Grade.builder()
-                        .id("grade-1")
-                        .score(15.0)
-                        .weightedScore(7.5)
-                        .student(
-                                com.example.demo.model.Student.builder()
-                                        .id("student-1")
-                                        .build())
-                        .build();
-
-        when(studentRepository.findById("student-1"))
-                .thenReturn(Optional.of(student));
-
-        when(gradeRepository.save(any(JGrade.class)))
-                .thenReturn(gradeEntity);
-
-        gradeService.saveGrade(model);
-
-        ArgumentCaptor<JGrade> captor =
-                ArgumentCaptor.forClass(JGrade.class);
-
-        verify(gradeRepository).save(captor.capture());
-
-        assertEquals(student, captor.getValue().getStudent());
-
-        verify(studentRepository).findById("student-1");
-    }
-
-    @Test
-    void shouldSaveGradeWithExam() {
-        JExam exam =
-                JExam.builder()
-                        .id("exam-1")
-                        .coefficient(0.5)
-                        .order(1)
-                        .build();
-
-        Grade model =
-                Grade.builder()
-                        .id("grade-1")
-                        .score(15.0)
-                        .weightedScore(7.5)
-                        .exam(
-                                com.example.demo.model.Exam.builder()
-                                        .id("exam-1")
-                                        .build())
-                        .build();
-
-        when(examRepository.findById("exam-1"))
-                .thenReturn(Optional.of(exam));
-
-        when(gradeRepository.save(any(JGrade.class)))
-                .thenReturn(gradeEntity);
-
-        gradeService.saveGrade(model);
-
-        ArgumentCaptor<JGrade> captor =
-                ArgumentCaptor.forClass(JGrade.class);
-
-        verify(gradeRepository).save(captor.capture());
-
-        assertEquals(exam, captor.getValue().getExam());
-
-        verify(examRepository).findById("exam-1");
-    }
-
-    @Test
-    void shouldSaveGradeWithStudentAndExam() {
-        JStudent student =
-                JStudent.builder()
-                        .id("student-1")
-                        .studentNumber("STD001")
-                        .build();
-
-        JExam exam =
-                JExam.builder()
-                        .id("exam-1")
-                        .coefficient(0.5)
-                        .order(1)
-                        .build();
-
-        Grade model =
-                Grade.builder()
-                        .id("grade-1")
-                        .score(15.0)
-                        .weightedScore(7.5)
-                        .student(
-                                com.example.demo.model.Student.builder()
-                                        .id("student-1")
-                                        .build())
-                        .exam(
-                                com.example.demo.model.Exam.builder()
-                                        .id("exam-1")
-                                        .build())
-                        .build();
-
-        when(studentRepository.findById("student-1"))
-                .thenReturn(Optional.of(student));
-
-        when(examRepository.findById("exam-1"))
-                .thenReturn(Optional.of(exam));
-
-        when(gradeRepository.save(any(JGrade.class)))
-                .thenReturn(gradeEntity);
-
-        gradeService.saveGrade(model);
-
-        ArgumentCaptor<JGrade> captor =
-                ArgumentCaptor.forClass(JGrade.class);
-
-        verify(gradeRepository).save(captor.capture());
-
-        JGrade savedEntity = captor.getValue();
-
-        assertEquals(student, savedEntity.getStudent());
-        assertEquals(exam, savedEntity.getExam());
-        assertEquals(15.0, savedEntity.getScore());
         assertTrue(savedEntity.getIsValidated());
 
         verify(studentRepository).findById("student-1");
@@ -264,18 +186,20 @@ class GradeServiceTest {
 
     @Test
     void shouldThrowExceptionWhenStudentNotFound() {
+        when(studentRepository.findById("unknown"))
+                .thenReturn(Optional.empty());
+
         Grade model =
                 Grade.builder()
                         .id("grade-1")
-                        .score(15.0)
                         .student(
-                                com.example.demo.model.Student.builder()
+                                Student.builder()
                                         .id("unknown")
                                         .build())
+                        .exam(examModel)
+                        .score(15.0)
+                        .weightedScore(7.5)
                         .build();
-
-        when(studentRepository.findById("unknown"))
-                .thenReturn(Optional.empty());
 
         RuntimeException exception =
                 assertThrows(
@@ -285,23 +209,29 @@ class GradeServiceTest {
         assertEquals("Student not found", exception.getMessage());
 
         verify(studentRepository).findById("unknown");
+        verify(examRepository, never()).findById(any());
         verify(gradeRepository, never()).save(any());
     }
 
     @Test
     void shouldThrowExceptionWhenExamNotFound() {
-        Grade model =
-                Grade.builder()
-                        .id("grade-1")
-                        .score(15.0)
-                        .exam(
-                                com.example.demo.model.Exam.builder()
-                                        .id("unknown")
-                                        .build())
-                        .build();
+        when(studentRepository.findById("student-1"))
+                .thenReturn(Optional.of(studentEntity));
 
         when(examRepository.findById("unknown"))
                 .thenReturn(Optional.empty());
+
+        Grade model =
+                Grade.builder()
+                        .id("grade-1")
+                        .student(studentModel)
+                        .exam(
+                                Exam.builder()
+                                        .id("unknown")
+                                        .build())
+                        .score(15.0)
+                        .weightedScore(7.5)
+                        .build();
 
         RuntimeException exception =
                 assertThrows(
@@ -310,8 +240,57 @@ class GradeServiceTest {
 
         assertEquals("Exam not found", exception.getMessage());
 
+        verify(studentRepository).findById("student-1");
         verify(examRepository).findById("unknown");
         verify(gradeRepository, never()).save(any());
+    }
+
+    @Test
+    void shouldRejectGradeWithoutStudent() {
+        Grade model =
+                Grade.builder()
+                        .id("grade-1")
+                        .exam(examModel)
+                        .score(15.0)
+                        .weightedScore(7.5)
+                        .build();
+
+        IllegalArgumentException exception =
+                assertThrows(
+                        IllegalArgumentException.class,
+                        () -> gradeService.saveGrade(model));
+
+        assertEquals(
+                "Grade must be associated with a student",
+                exception.getMessage());
+
+        verifyNoInteractions(studentRepository);
+        verifyNoInteractions(examRepository);
+        verifyNoInteractions(gradeRepository);
+    }
+
+    @Test
+    void shouldRejectGradeWithoutExam() {
+        Grade model =
+                Grade.builder()
+                        .id("grade-1")
+                        .student(studentModel)
+                        .score(15.0)
+                        .weightedScore(7.5)
+                        .build();
+
+        IllegalArgumentException exception =
+                assertThrows(
+                        IllegalArgumentException.class,
+                        () -> gradeService.saveGrade(model));
+
+        assertEquals(
+                "Grade must be associated with an exam",
+                exception.getMessage());
+
+        verifyNoInteractions(studentRepository);
+        verifyNoInteractions(examRepository);
+        verifyNoInteractions(gradeRepository);
     }
 
     @Test
@@ -319,14 +298,67 @@ class GradeServiceTest {
         Grade model =
                 Grade.builder()
                         .id("grade-1")
+                        .student(studentModel)
+                        .exam(examModel)
                         .score(25.0)
+                        .weightedScore(12.5)
                         .build();
 
-        assertThrows(
-                RuntimeException.class,
-                () -> gradeService.saveGrade(model));
+        IllegalArgumentException exception =
+                assertThrows(
+                        IllegalArgumentException.class,
+                        () -> gradeService.saveGrade(model));
 
-        verify(gradeRepository, never()).save(any());
+        assertEquals(
+                "Score must be between 0 and 20",
+                exception.getMessage());
+
+        verifyNoInteractions(studentRepository);
+        verifyNoInteractions(examRepository);
+        verifyNoInteractions(gradeRepository);
+    }
+
+    @Test
+    void shouldSaveRetakeGradeAsNotValidated() {
+        Grade model =
+                Grade.builder()
+                        .id("grade-2")
+                        .student(studentModel)
+                        .exam(examModel)
+                        .score(8.0)
+                        .weightedScore(4.0)
+                        .build();
+
+        JGrade savedEntity =
+                JGrade.builder()
+                        .id("grade-2")
+                        .student(studentEntity)
+                        .exam(examEntity)
+                        .score(8.0)
+                        .weightedScore(4.0)
+                        .isValidated(false)
+                        .build();
+
+        when(studentRepository.findById("student-1"))
+                .thenReturn(Optional.of(studentEntity));
+
+        when(examRepository.findById("exam-1"))
+                .thenReturn(Optional.of(examEntity));
+
+        when(gradeRepository.save(any(JGrade.class)))
+                .thenReturn(savedEntity);
+
+        gradeService.saveGrade(model);
+
+        ArgumentCaptor<JGrade> captor =
+                ArgumentCaptor.forClass(JGrade.class);
+
+        verify(gradeRepository).save(captor.capture());
+
+        JGrade entity = captor.getValue();
+
+        assertEquals(8.0, entity.getScore());
+        assertFalse(entity.getIsValidated());
     }
 
     @Test
@@ -365,7 +397,8 @@ class GradeServiceTest {
 
         assertEquals(13.6, result, 0.001);
 
-        verify(gradeRepository).findByStudentId("student-1");
+        verify(gradeRepository)
+                .findByStudentId("student-1");
     }
 
     @Test
@@ -385,7 +418,8 @@ class GradeServiceTest {
 
         assertEquals(0.0, result);
 
-        verify(gradeRepository).findByStudentId("student-1");
+        verify(gradeRepository)
+                .findByStudentId("student-1");
     }
 
     @Test
@@ -441,10 +475,12 @@ class GradeServiceTest {
 
         assertNotNull(result);
         assertEquals(1, result.size());
+
         assertEquals("grade-2", result.get(0).getId());
         assertEquals(5.0, result.get(0).getScore());
 
-        verify(gradeRepository).findByStudentId("student-1");
+        verify(gradeRepository)
+                .findByStudentId("student-1");
     }
 
     @Test
@@ -463,5 +499,8 @@ class GradeServiceTest {
 
         assertNotNull(result);
         assertTrue(result.isEmpty());
+
+        verify(gradeRepository)
+                .findByStudentId("student-1");
     }
 }
