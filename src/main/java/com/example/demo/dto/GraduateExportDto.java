@@ -8,9 +8,9 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class GraduateExportDto {
-    private Integer rank;
-    private String studentNumber;
-    private String firstName;
-    private String lastName;
-    private Double generalAverage;
+  private Integer rank;
+  private String studentNumber;
+  private String firstName;
+  private String lastName;
+  private Double generalAverage;
 }
