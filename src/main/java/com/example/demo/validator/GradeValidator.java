@@ -21,6 +21,14 @@ public final class GradeValidator {
             throw new IllegalArgumentException("Grade cannot be null");
         }
 
+        if (grade.getStudent() == null) {
+            throw new IllegalArgumentException("Grade must be associated with a student");
+        }
+
+        if (grade.getExam() == null) {
+            throw new IllegalArgumentException("Grade must be associated with an exam");
+        }
+
         validateScore(grade.getScore());
     }
 
@@ -28,7 +36,8 @@ public final class GradeValidator {
         validateScore(score);
 
         if (reason == null || reason.isBlank()) {
-            throw new IllegalArgumentException("A reason is required when updating a grade");
+            throw new IllegalArgumentException(
+                    "A reason is required when updating a grade");
         }
     }
 }
