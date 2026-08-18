@@ -59,7 +59,7 @@ public class GradeService {
                     .exam(exam)
                     .score(model.getScore())
                     .weightedScore(model.getWeightedScore())
-                    .isValidated(model.getIsValidated())
+                    .isValidated(!GradeValidator.isRetake(model.getScore()))
                     .validatedAt(model.getValidatedAt())
                     .build();
 
@@ -81,5 +81,12 @@ public class GradeService {
     }
 
     return totalCoefficients == 0 ? 0.0 : (totalWeightedPoints / totalCoefficients);
+  }
+
+  public List<Grade> getRetakeGradesForStudent(String studentId) {
+    return gradeRepository.findByStudentId(studentId).stream()
+            .filter(grade -> GradeValidator.isRetake(grade.getScore()))
+            .map(GradeMapper::toModel)
+            .toList();
   }
 }
