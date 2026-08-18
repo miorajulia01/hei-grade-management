@@ -24,9 +24,9 @@ public class ExamService {
 
   public Exam getExamById(String id) {
     JExam entity =
-            examRepository
-                    .findById(id)
-                    .orElseThrow(() -> new RuntimeException("Exam not found with id: " + id));
+        examRepository
+            .findById(id)
+            .orElseThrow(() -> new RuntimeException("Exam not found with id: " + id));
     return ExamMapper.toModel(entity);
   }
 
@@ -36,22 +36,22 @@ public class ExamService {
     JCourse course = null;
     if (model.getCourse() != null && model.getCourse().getId() != null) {
       course =
-              courseRepository
-                      .findById(model.getCourse().getId())
-                      .orElseThrow(() -> new RuntimeException("Course not found"));
+          courseRepository
+              .findById(model.getCourse().getId())
+              .orElseThrow(() -> new RuntimeException("Course not found"));
     }
 
     JExam entity =
-            JExam.builder()
-                    .id(model.getId())
-                    .course(course)
-                    .type(model.getType())
-                    .title(model.getTitle())
-                    .dateExam(model.getDateExam())
-                    .coefficient(model.getCoefficient())
-                    .order(model.getOrder())
-                    .isPublished(model.getIsPublished())
-                    .build();
+        JExam.builder()
+            .id(model.getId())
+            .course(course)
+            .type(model.getType())
+            .title(model.getTitle())
+            .dateExam(model.getDateExam())
+            .coefficient(model.getCoefficient())
+            .order(model.getOrder())
+            .isPublished(model.getIsPublished())
+            .build();
 
     JExam saved = examRepository.save(entity);
     return ExamMapper.toModel(saved);

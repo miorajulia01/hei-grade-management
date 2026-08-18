@@ -23,9 +23,9 @@ public class DocExportService {
 
   public DocExport getDocExportById(String id) {
     JDocExport entity =
-            docExportRepository
-                    .findById(id)
-                    .orElseThrow(() -> new RuntimeException("DocExport not found with id: " + id));
+        docExportRepository
+            .findById(id)
+            .orElseThrow(() -> new RuntimeException("DocExport not found with id: " + id));
     return DocExportMapper.toModel(entity);
   }
 
@@ -33,23 +33,23 @@ public class DocExportService {
     JUser user = null;
     if (model.getUser() != null && model.getUser().getId() != null) {
       user =
-              userRepository
-                      .findById(model.getUser().getId())
-                      .orElseThrow(() -> new RuntimeException("User not found"));
+          userRepository
+              .findById(model.getUser().getId())
+              .orElseThrow(() -> new RuntimeException("User not found"));
     }
 
     JDocExport entity =
-            JDocExport.builder()
-                    .id(model.getId())
-                    .user(user)
-                    .exportType(model.getExportType())
-                    .fileName(model.getFileName())
-                    .filePath(model.getFilePath())
-                    .fileSize(model.getFileSize())
-                    .format(model.getFormat())
-                    .filters(model.getFilters())
-                    .createdAt(model.getCreatedAt())
-                    .build();
+        JDocExport.builder()
+            .id(model.getId())
+            .user(user)
+            .exportType(model.getExportType())
+            .fileName(model.getFileName())
+            .filePath(model.getFilePath())
+            .fileSize(model.getFileSize())
+            .format(model.getFormat())
+            .filters(model.getFilters())
+            .createdAt(model.getCreatedAt())
+            .build();
 
     JDocExport saved = docExportRepository.save(entity);
     return DocExportMapper.toModel(saved);
