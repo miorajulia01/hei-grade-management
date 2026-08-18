@@ -66,4 +66,20 @@ public class GradeService {
     JGrade saved = gradeRepository.save(entity);
     return GradeMapper.toModel(saved);
   }
+
+  public Double calculateWeightedAverage(String studentId) {
+    List<JGrade> grades = gradeRepository.findByStudentId(studentId);
+    double totalWeightedPoints = 0.0;
+    double totalCoefficients = 0.0;
+
+    for (JGrade grade : grades) {
+      if (grade.getExam() != null) {
+        double coef = grade.getExam().getCoefficient();
+        totalWeightedPoints += (grade.getScore() * coef);
+        totalCoefficients += coef;
+      }
+    }
+
+    return totalCoefficients == 0 ? 0.0 : (totalWeightedPoints / totalCoefficients);
+  }
 }
