@@ -43,4 +43,31 @@ public class GroupService {
     JGroup saved = groupRepository.save(entity);
     return GroupMapper.toModel(saved);
   }
+
+  public Group updateGroup(String id, Group model) {
+    JGroup existing =
+        groupRepository
+            .findById(id)
+            .orElseThrow(() -> new RuntimeException("Group not found with id: " + id));
+
+    if (model.getProgram() != null && model.getProgram().getId() != null) {
+      JProgram program =
+          programRepository
+              .findById(model.getProgram().getId())
+              .orElseThrow(() -> new RuntimeException("Program not found"));
+      existing.setProgram(program);
+    }
+    existing.setRef(model.getRef());
+    existing.setCapacity(model.getCapacity());
+
+    JGroup saved = groupRepository.save(existing);
+    return GroupMapper.toModel(saved);
+  }
+
+  public void deleteGroup(String id) {
+    if (!groupRepository.existsById(id)) {
+      throw new RuntimeException("Group not found with id: " + id);
+    }
+    groupRepository.deleteById(id);
+  }
 }
