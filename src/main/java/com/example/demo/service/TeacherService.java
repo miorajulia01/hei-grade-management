@@ -26,31 +26,11 @@ public class TeacherService {
         teacherRepository
             .findById(id)
             .orElseThrow(() -> new RuntimeException("Teacher not found with id: " + id));
-
     return TeacherMapper.toModel(entity);
-  }
-
-  public List<Teacher> findByFirstName(String firstName) {
-    return teacherRepository.findByFirstNameContainingIgnoreCase(firstName).stream()
-        .map(TeacherMapper::toModel)
-        .toList();
-  }
-
-  public List<Teacher> findByLastName(String lastName) {
-    return teacherRepository.findByLastNameContainingIgnoreCase(lastName).stream()
-        .map(TeacherMapper::toModel)
-        .toList();
-  }
-
-  public List<Teacher> findBySpecialty(String specialty) {
-    return teacherRepository.findBySpecialtyContainingIgnoreCase(specialty).stream()
-        .map(TeacherMapper::toModel)
-        .toList();
   }
 
   public Teacher saveTeacher(Teacher model) {
     JUser user = null;
-
     if (model.getUser() != null && model.getUser().getId() != null) {
       user =
           userRepository
@@ -69,7 +49,6 @@ public class TeacherService {
             .build();
 
     JTeacher saved = teacherRepository.save(entity);
-
     return TeacherMapper.toModel(saved);
   }
 }

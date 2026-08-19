@@ -1,0 +1,23 @@
+version: "3.8"
+
+services:
+  postgres:
+    image: postgres:13.9
+    container_name: hei-grade-management-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: hei_grade_management
+      POSTGRES_USER: hei
+      POSTGRES_PASSWORD: hei_dev_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - hei-grade-management-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U hei -d hei_grade_management"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  hei-grade-management-pgdata:
