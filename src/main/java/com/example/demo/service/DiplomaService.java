@@ -25,11 +25,12 @@ public class DiplomaService {
   }
 
   public List<Diploma> getGraduatesByPromotion(String promotionId) {
-    List<Diploma> graduates = studentRepository.findByPromotionId(promotionId).stream()
-        .filter(student -> isGraduate(student.getId()))
-        .map(this::toDiploma)
-        .sorted(Comparator.comparingDouble(Diploma::getAverage).reversed())
-        .toList();
+    List<Diploma> graduates =
+        studentRepository.findByPromotionId(promotionId).stream()
+            .filter(student -> isGraduate(student.getId()))
+            .map(this::toDiploma)
+            .sorted(Comparator.comparingDouble(Diploma::getAverage).reversed())
+            .toList();
 
     for (int i = 0; i < graduates.size(); i++) {
       graduates.get(i).setRank(i + 1);

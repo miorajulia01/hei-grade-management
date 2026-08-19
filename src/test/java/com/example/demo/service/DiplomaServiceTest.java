@@ -16,23 +16,21 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class DiplomaServiceTest {
 
-  @Mock
-  private StudentRepository studentRepository;
+  @Mock private StudentRepository studentRepository;
 
-  @Mock
-  private StudentProgressionService studentProgressionService;
+  @Mock private StudentProgressionService studentProgressionService;
 
-  @InjectMocks
-  private DiplomaService diplomaService;
+  @InjectMocks private DiplomaService diplomaService;
 
   @Test
   void shouldReturnGraduateWhenStudentHas180CreditsAndAverageAtLeast10() {
-    JStudent student = JStudent.builder()
-        .id("student-1")
-        .studentNumber("STD001")
-        .firstName("Jean")
-        .lastName("Rakoto")
-        .build();
+    JStudent student =
+        JStudent.builder()
+            .id("student-1")
+            .studentNumber("STD001")
+            .firstName("Jean")
+            .lastName("Rakoto")
+            .build();
 
     when(studentProgressionService.calculateAverage("student-1")).thenReturn(12.5);
 
@@ -71,19 +69,21 @@ class DiplomaServiceTest {
 
   @Test
   void shouldReturnGraduatesOrderedByAverage() {
-    JStudent student1 = JStudent.builder()
-        .id("student-1")
-        .studentNumber("STD001")
-        .firstName("Jean")
-        .lastName("Rakoto")
-        .build();
+    JStudent student1 =
+        JStudent.builder()
+            .id("student-1")
+            .studentNumber("STD001")
+            .firstName("Jean")
+            .lastName("Rakoto")
+            .build();
 
-    JStudent student2 = JStudent.builder()
-        .id("student-2")
-        .studentNumber("STD002")
-        .firstName("Paul")
-        .lastName("Rabe")
-        .build();
+    JStudent student2 =
+        JStudent.builder()
+            .id("student-2")
+            .studentNumber("STD002")
+            .firstName("Paul")
+            .lastName("Rabe")
+            .build();
 
     when(studentRepository.findByPromotionId("promotion-1"))
         .thenReturn(List.of(student1, student2));
