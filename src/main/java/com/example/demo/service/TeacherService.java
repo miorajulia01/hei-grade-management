@@ -51,4 +51,33 @@ public class TeacherService {
     JTeacher saved = teacherRepository.save(entity);
     return TeacherMapper.toModel(saved);
   }
+
+  public Teacher updateTeacher(String id, Teacher model) {
+    JTeacher existing =
+        teacherRepository
+            .findById(id)
+            .orElseThrow(() -> new RuntimeException("Teacher not found with id: " + id));
+
+    if (model.getUser() != null && model.getUser().getId() != null) {
+      JUser user =
+          userRepository
+              .findById(model.getUser().getId())
+              .orElseThrow(() -> new RuntimeException("User not found"));
+      existing.setUser(user);
+    }
+    existing.setFirstName(model.getFirstName());
+    existing.setLastName(model.getLastName());
+    existing.setSpecialty(model.getSpecialty());
+    existing.setStatus(model.getStatus());
+
+    JTeacher saved = teacherRepository.save(existing);
+    return TeacherMapper.toModel(saved);
+  }
+
+  public void deleteTeacher(String id) {
+    if (!teacherRepository.existsById(id)) {
+      throw new RuntimeException("Teacher not found with id: " + id);
+    }
+    teacherRepository.deleteById(id);
+  }
 }

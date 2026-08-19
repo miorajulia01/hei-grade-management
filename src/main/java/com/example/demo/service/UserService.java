@@ -47,4 +47,33 @@ public class UserService {
     JUser saved = userRepository.save(entity);
     return UserMapper.toModel(saved);
   }
+
+  public User updateUser(String id, User model) {
+    JUser existing =
+        userRepository
+            .findById(id)
+            .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
+
+    if (model.getEmail() != null) {
+      existing.setEmail(model.getEmail());
+    }
+    if (model.getPassword() != null && !model.getPassword().isBlank()) {
+      existing.setPassword(passwordEncoder.encode(model.getPassword()));
+    }
+    if (model.getRole() != null) {
+      existing.setRole(model.getRole());
+    }
+    if (model.getStatus() != null) {
+      existing.setStatus(model.getStatus());
+    }
+    JUser saved = userRepository.save(existing);
+    return UserMapper.toModel(saved);
+  }
+
+  public void deleteUser(String id) {
+    if (!userRepository.existsById(id)) {
+      throw new RuntimeException("User not found with id: " + id);
+    }
+    userRepository.deleteById(id);
+  }
 }
