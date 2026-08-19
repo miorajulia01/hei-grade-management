@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Promotions - Gestion des diplômes</title>
+  </head>
+  <body>
+    <main>
+      <h1>Promotions</h1>
+      <p>Sélectionnez une promotion pour consulter ses diplômés.</p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Référence</th>
+            <th>Promotion</th>
+            <th>Année académique</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr th:each="promotion : ${promotions}">
+            <td th:text="${promotion.ref}">H</td>
+            <td th:text="${promotion.label}">Promotion H</td>
+            <td
+              th:text="${promotion.academicYear != null ? promotion.academicYear.label : '-'}"
+            >
+              2025-2026
+            </td>
+            <td>
+              <a th:href="@{/diplomas/promotions/{id}(id=${promotion.id})}"
+                >Voir les diplômés</a
+              >
+            </td>
+          </tr>
+          <tr th:if="${#lists.isEmpty(promotions)}">
+            <td colspan="4">Aucune promotion disponible.</td>
+          </tr>
+        </tbody>
+      </table>
+    </main>
+  </body>
+</html>
