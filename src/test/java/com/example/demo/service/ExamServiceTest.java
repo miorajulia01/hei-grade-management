@@ -251,4 +251,112 @@ class ExamServiceTest {
     verifyNoInteractions(courseRepository);
     verifyNoInteractions(examRepository);
   }
+
+  @Test
+  void shouldUpdateExam() {
+    when(examRepository.findById("exam-1")).thenReturn(Optional.of(examEntity));
+
+    Exam model =
+        Exam.builder()
+            .id("exam-1")
+            .type("RETAKE")
+            .title("Retake Exam")
+            .coefficient(0.3)
+            .order(2)
+            .isPublished(false)
+            .build();
+
+    JExam updatedEntity =
+        JExam.builder()
+            .id("exam-1")
+            .course(courseEntity)
+            .type("RETAKE")
+            .title("Retake Exam")
+            .coefficient(0.3)
+            .order(2)
+            .isPublished(false)
+            .build();
+
+    when(examRepository.save(any(JExam.class))).thenReturn(updatedEntity);
+
+    Exam result = examService.updateExam("exam-1", model);
+
+    assertNotNull(result);
+    assertEquals("RETAKE", result.getType());
+    assertEquals("Retake Exam", result.getTitle());
+    assertEquals(0.3, result.getCoefficient());
+    assertEquals(2, result.getOrder());
+    assertFalse(result.getIsPublished());
+
+    verify(examRepository).findById("exam-1");
+    verify(examRepository).save(any(JExam.class));
+  }
+
+  @Test
+  void shouldUpdateExamWithCourse() {
+    when(examRepository.findById("exam-1")).thenReturn(Optional.of(examEntity));
+
+    JCourse newCourse =
+        JCourse.builder().id("course-2").ref("WEB").title("Web Development").build();
+
+    Exam model =
+        Exam.builder()
+            .id("exam-1")
+            .course(Course.builder().id("course-2").build())
+            .type("FINAL")
+            .title("Final Exam")
+            .coefficient(0.5)
+            .order(1)
+            .build();
+
+    when(courseRepository.findById("course-2")).thenReturn(Optional.of(newCourse));
+
+    when(examRepository.save(any(JExam.class))).thenReturn(examEntity);
+
+    examService.updateExam("exam-1", model);
+
+    ArgumentCaptor<JExam> captor = ArgumentCaptor.forClass(JExam.class);
+
+    verify(examRepository).save(captor.capture());
+
+    assertEquals(newCourse, captor.getValue().getCourse());
+
+    verify(courseRepository).findById("course-2");
+  }
+
+  @Test
+  void shouldThrowExceptionWhenUpdatingExamNotFound() {
+    when(examRepository.findById("unknown")).thenReturn(Optional.empty());
+
+    RuntimeException exception =
+        assertThrows(
+            RuntimeException.class,
+            () -> examService.updateExam("unknown", Exam.builder().build()));
+
+    assertEquals("Exam not found with id: unknown", exception.getMessage());
+
+    verify(examRepository).findById("unknown");
+    verify(examRepository, never()).save(any());
+  }
+
+  @Test
+  void shouldDeleteExam() {
+    when(examRepository.existsById("exam-1")).thenReturn(true);
+
+    examService.deleteExam("exam-1");
+
+    verify(examRepository).deleteById("exam-1");
+  }
+
+  @Test
+  void shouldThrowExceptionWhenDeletingExamNotFound() {
+    when(examRepository.existsById("unknown")).thenReturn(false);
+
+    RuntimeException exception =
+        assertThrows(RuntimeException.class, () -> examService.deleteExam("unknown"));
+
+    assertEquals("Exam not found with id: unknown", exception.getMessage());
+
+    verify(examRepository, never()).deleteById("unknown");
+  }
 }
