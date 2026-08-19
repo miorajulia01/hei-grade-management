@@ -65,6 +65,28 @@ public class SecurityConfig {
                         "/courses",
                         "/course-teachers")
                     .hasRole("ADMIN")
+                    .requestMatchers(
+                        HttpMethod.PUT,
+                        "/academic-years/**",
+                        "/promotions/**",
+                        "/programs/**",
+                        "/groups/**",
+                        "/group-assignments/**",
+                        "/semesters/**",
+                        "/courses/**",
+                        "/course-teachers/**")
+                    .hasRole("ADMIN")
+                    .requestMatchers(
+                        HttpMethod.DELETE,
+                        "/academic-years/**",
+                        "/promotions/**",
+                        "/programs/**",
+                        "/groups/**",
+                        "/group-assignments/**",
+                        "/semesters/**",
+                        "/courses/**",
+                        "/course-teachers/**")
+                    .hasRole("ADMIN")
                     .requestMatchers(HttpMethod.POST, "/exams", "/grades")
                     .hasAnyRole("ADMIN", "TEACHER")
                     .requestMatchers(HttpMethod.PUT, "/grades/**")
