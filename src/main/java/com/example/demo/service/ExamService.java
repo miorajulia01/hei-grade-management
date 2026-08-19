@@ -56,4 +56,35 @@ public class ExamService {
     JExam saved = examRepository.save(entity);
     return ExamMapper.toModel(saved);
   }
+
+  public Exam updateExam(String id, Exam model) {
+    JExam existing =
+        examRepository
+            .findById(id)
+            .orElseThrow(() -> new RuntimeException("Exam not found with id: " + id));
+
+    if (model.getCourse() != null && model.getCourse().getId() != null) {
+      JCourse course =
+          courseRepository
+              .findById(model.getCourse().getId())
+              .orElseThrow(() -> new RuntimeException("Course not found"));
+      existing.setCourse(course);
+    }
+    existing.setType(model.getType());
+    existing.setTitle(model.getTitle());
+    existing.setDateExam(model.getDateExam());
+    existing.setCoefficient(model.getCoefficient());
+    existing.setOrder(model.getOrder());
+    existing.setIsPublished(model.getIsPublished());
+
+    JExam saved = examRepository.save(existing);
+    return ExamMapper.toModel(saved);
+  }
+
+  public void deleteExam(String id) {
+    if (!examRepository.existsById(id)) {
+      throw new RuntimeException("Exam not found with id: " + id);
+    }
+    examRepository.deleteById(id);
+  }
 }
