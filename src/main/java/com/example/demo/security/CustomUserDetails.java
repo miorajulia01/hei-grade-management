@@ -1,6 +1,7 @@
 package com.example.demo.security;
 
 import com.example.demo.entity.JUser;
+import com.example.demo.enums.StatusEnum;
 import java.util.Collection;
 import java.util.List;
 import lombok.Getter;
@@ -49,6 +50,6 @@ public class CustomUserDetails implements UserDetails {
 
   @Override
   public boolean isEnabled() {
-    return true;
+    return user.getStatus() == StatusEnum.ACTIVE;
   }
 }
