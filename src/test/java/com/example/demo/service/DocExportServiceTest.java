@@ -291,4 +291,155 @@ class DocExportServiceTest {
 
     verifyNoInteractions(userRepository);
   }
+
+  @Test
+  void shouldUpdateDocExport() {
+    when(docExportRepository.findById("export-1")).thenReturn(Optional.of(docExportEntity));
+
+    DocExport model =
+        DocExport.builder()
+            .id("export-1")
+            .exportType("TRANSCRIPT")
+            .fileName("transcript.pdf")
+            .filePath("/exports/transcript.pdf")
+            .fileSize(2048L)
+            .format("PDF")
+            .filters("promotionId=promo-1")
+            .build();
+
+    JDocExport updatedEntity =
+        JDocExport.builder()
+            .id("export-1")
+            .user(userEntity)
+            .exportType("TRANSCRIPT")
+            .fileName("transcript.pdf")
+            .filePath("/exports/transcript.pdf")
+            .fileSize(2048L)
+            .format("PDF")
+            .filters("promotionId=promo-1")
+            .build();
+
+    when(docExportRepository.save(any(JDocExport.class))).thenReturn(updatedEntity);
+
+    DocExport result = docExportService.updateDocExport("export-1", model);
+
+    assertNotNull(result);
+    assertEquals("TRANSCRIPT", result.getExportType());
+    assertEquals("transcript.pdf", result.getFileName());
+    assertEquals("/exports/transcript.pdf", result.getFilePath());
+    assertEquals(2048L, result.getFileSize());
+    assertEquals("PDF", result.getFormat());
+    assertEquals("promotionId=promo-1", result.getFilters());
+
+    ArgumentCaptor<JDocExport> captor = ArgumentCaptor.forClass(JDocExport.class);
+
+    verify(docExportRepository).save(captor.capture());
+
+    JDocExport savedEntity = captor.getValue();
+
+    assertEquals(userEntity, savedEntity.getUser());
+    assertEquals("TRANSCRIPT", savedEntity.getExportType());
+    assertEquals("transcript.pdf", savedEntity.getFileName());
+    assertEquals("promotionId=promo-1", savedEntity.getFilters());
+
+    verify(docExportRepository).findById("export-1");
+  }
+
+  @Test
+  void shouldUpdateDocExportWithUser() {
+    when(docExportRepository.findById("export-1")).thenReturn(Optional.of(docExportEntity));
+
+    JUser newUser = JUser.builder().id("user-2").email("new@example.com").build();
+
+    DocExport model =
+        DocExport.builder()
+            .id("export-1")
+            .user(User.builder().id("user-2").build())
+            .exportType("GRADUATE_LIST")
+            .fileName("graduates.pdf")
+            .filePath("/exports/graduates.pdf")
+            .fileSize(4096L)
+            .format("PDF")
+            .filters("promotionId=promo-1")
+            .build();
+
+    when(userRepository.findById("user-2")).thenReturn(Optional.of(newUser));
+
+    when(docExportRepository.save(any(JDocExport.class))).thenReturn(docExportEntity);
+
+    docExportService.updateDocExport("export-1", model);
+
+    ArgumentCaptor<JDocExport> captor = ArgumentCaptor.forClass(JDocExport.class);
+
+    verify(docExportRepository).save(captor.capture());
+
+    assertEquals(newUser, captor.getValue().getUser());
+
+    verify(userRepository).findById("user-2");
+  }
+
+  @Test
+  void shouldThrowExceptionWhenUpdatingDocExportNotFound() {
+    when(docExportRepository.findById("unknown")).thenReturn(Optional.empty());
+
+    RuntimeException exception =
+        assertThrows(
+            RuntimeException.class,
+            () -> docExportService.updateDocExport("unknown", DocExport.builder().build()));
+
+    assertEquals("DocExport not found with id: unknown", exception.getMessage());
+
+    verify(docExportRepository).findById("unknown");
+    verify(docExportRepository, never()).save(any());
+  }
+
+  @Test
+  void shouldThrowExceptionWhenUpdatingWithUserNotFound() {
+    when(docExportRepository.findById("export-1")).thenReturn(Optional.of(docExportEntity));
+
+    DocExport model =
+        DocExport.builder()
+            .id("export-1")
+            .user(User.builder().id("unknown").build())
+            .exportType("TRANSCRIPT")
+            .fileName("transcript.pdf")
+            .filePath("/exports/transcript.pdf")
+            .fileSize(2048L)
+            .format("PDF")
+            .filters(null)
+            .build();
+
+    when(userRepository.findById("unknown")).thenReturn(Optional.empty());
+
+    RuntimeException exception =
+        assertThrows(
+            RuntimeException.class, () -> docExportService.updateDocExport("export-1", model));
+
+    assertEquals("User not found", exception.getMessage());
+
+    verify(docExportRepository).findById("export-1");
+    verify(userRepository).findById("unknown");
+    verify(docExportRepository, never()).save(any());
+  }
+
+  @Test
+  void shouldDeleteDocExport() {
+    when(docExportRepository.existsById("export-1")).thenReturn(true);
+
+    docExportService.deleteDocExport("export-1");
+
+    verify(docExportRepository).deleteById("export-1");
+  }
+
+  @Test
+  void shouldThrowExceptionWhenDeletingDocExportNotFound() {
+    when(docExportRepository.existsById("unknown")).thenReturn(false);
+
+    RuntimeException exception =
+        assertThrows(RuntimeException.class, () -> docExportService.deleteDocExport("unknown"));
+
+    assertEquals("DocExport not found with id: unknown", exception.getMessage());
+
+    verify(docExportRepository, never()).deleteById("unknown");
+  }
 }

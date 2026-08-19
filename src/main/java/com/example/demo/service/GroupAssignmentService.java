@@ -74,4 +74,46 @@ public class GroupAssignmentService {
     JGroupAssignment saved = groupAssignmentRepository.save(entity);
     return GroupAssignmentMapper.toModel(saved);
   }
+
+  public GroupAssignment updateGroupAssignment(String id, GroupAssignment model) {
+    JGroupAssignment existing =
+        groupAssignmentRepository
+            .findById(id)
+            .orElseThrow(() -> new RuntimeException("GroupAssignment not found with id: " + id));
+
+    if (model.getStudent() != null && model.getStudent().getId() != null) {
+      JStudent student =
+          studentRepository
+              .findById(model.getStudent().getId())
+              .orElseThrow(() -> new RuntimeException("Student not found"));
+      existing.setStudent(student);
+    }
+    if (model.getGroup() != null && model.getGroup().getId() != null) {
+      JGroup group =
+          groupRepository
+              .findById(model.getGroup().getId())
+              .orElseThrow(() -> new RuntimeException("Group not found"));
+      existing.setGroup(group);
+    }
+    if (model.getSemester() != null && model.getSemester().getId() != null) {
+      JSemester semester =
+          semesterRepository
+              .findById(model.getSemester().getId())
+              .orElseThrow(() -> new RuntimeException("Semester not found"));
+      existing.setSemester(semester);
+    }
+    if (model.getIsActive() != null) {
+      existing.setIsActive(model.getIsActive());
+    }
+
+    JGroupAssignment saved = groupAssignmentRepository.save(existing);
+    return GroupAssignmentMapper.toModel(saved);
+  }
+
+  public void deleteGroupAssignment(String id) {
+    if (!groupAssignmentRepository.existsById(id)) {
+      throw new RuntimeException("GroupAssignment not found with id: " + id);
+    }
+    groupAssignmentRepository.deleteById(id);
+  }
 }

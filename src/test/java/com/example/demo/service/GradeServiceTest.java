@@ -380,4 +380,25 @@ class GradeServiceTest {
 
     verify(gradeRepository).findByStudentId("student-1");
   }
+
+  @Test
+  void shouldDeleteGrade() {
+    when(gradeRepository.existsById("grade-1")).thenReturn(true);
+
+    gradeService.deleteGrade("grade-1");
+
+    verify(gradeRepository).deleteById("grade-1");
+  }
+
+  @Test
+  void shouldThrowExceptionWhenDeletingGradeNotFound() {
+    when(gradeRepository.existsById("unknown")).thenReturn(false);
+
+    RuntimeException exception =
+        assertThrows(RuntimeException.class, () -> gradeService.deleteGrade("unknown"));
+
+    assertEquals("Grade not found with id: unknown", exception.getMessage());
+
+    verify(gradeRepository, never()).deleteById("unknown");
+  }
 }

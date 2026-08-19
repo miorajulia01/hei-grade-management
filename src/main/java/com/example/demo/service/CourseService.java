@@ -55,6 +55,7 @@ public class CourseService {
             .ref(model.getRef())
             .title(model.getTitle())
             .credit(model.getCredit())
+            .type(model.getType())
             .program(program)
             .semester(semester)
             .isActive(model.getIsActive())
@@ -62,5 +63,42 @@ public class CourseService {
 
     JCourse saved = courseRepository.save(entity);
     return CourseMapper.toModel(saved);
+  }
+
+  public Course updateCourse(String id, Course model) {
+    JCourse existing =
+        courseRepository
+            .findById(id)
+            .orElseThrow(() -> new RuntimeException("Course not found with id: " + id));
+
+    if (model.getProgram() != null && model.getProgram().getId() != null) {
+      JProgram program =
+          programRepository
+              .findById(model.getProgram().getId())
+              .orElseThrow(() -> new RuntimeException("Program not found"));
+      existing.setProgram(program);
+    }
+    if (model.getSemester() != null && model.getSemester().getId() != null) {
+      JSemester semester =
+          semesterRepository
+              .findById(model.getSemester().getId())
+              .orElseThrow(() -> new RuntimeException("Semester not found"));
+      existing.setSemester(semester);
+    }
+    existing.setRef(model.getRef());
+    existing.setTitle(model.getTitle());
+    existing.setCredit(model.getCredit());
+    existing.setType(model.getType());
+    existing.setIsActive(model.getIsActive());
+
+    JCourse saved = courseRepository.save(existing);
+    return CourseMapper.toModel(saved);
+  }
+
+  public void deleteCourse(String id) {
+    if (!courseRepository.existsById(id)) {
+      throw new RuntimeException("Course not found with id: " + id);
+    }
+    courseRepository.deleteById(id);
   }
 }

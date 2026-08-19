@@ -55,9 +55,52 @@ public class StudentService {
             .user(user)
             .promotion(promotion)
             .studentNumber(model.getStudentNumber())
+            .firstName(model.getFirstName())
+            .lastName(model.getLastName())
+            .email(model.getEmail())
+            .status(model.getStatus())
+            .dateEnroll(model.getDateEnroll())
             .build();
 
     JStudent saved = studentRepository.save(entity);
     return StudentMapper.toModel(saved);
+  }
+
+  public Student updateStudent(String id, Student model) {
+    JStudent existing =
+        studentRepository
+            .findById(id)
+            .orElseThrow(() -> new RuntimeException("Student not found with id: " + id));
+
+    if (model.getUser() != null && model.getUser().getId() != null) {
+      JUser user =
+          userRepository
+              .findById(model.getUser().getId())
+              .orElseThrow(() -> new RuntimeException("User not found"));
+      existing.setUser(user);
+    }
+    if (model.getPromotion() != null && model.getPromotion().getId() != null) {
+      JPromotion promotion =
+          promotionRepository
+              .findById(model.getPromotion().getId())
+              .orElseThrow(() -> new RuntimeException("Promotion not found"));
+      existing.setPromotion(promotion);
+    }
+    existing.setStudentNumber(model.getStudentNumber());
+    existing.setFirstName(model.getFirstName());
+    existing.setLastName(model.getLastName());
+    existing.setEmail(model.getEmail());
+    existing.setStatus(model.getStatus());
+    existing.setDateEnroll(model.getDateEnroll());
+
+    JStudent saved = studentRepository.save(existing);
+    return StudentMapper.toModel(saved);
+  }
+
+  public void deleteStudent(String id) {
+    if (!studentRepository.existsById(id)) {
+      throw new RuntimeException("Student not found with id: " + id);
+    }
+    studentRepository.deleteById(id);
   }
 }

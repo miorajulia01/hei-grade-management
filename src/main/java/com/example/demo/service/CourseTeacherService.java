@@ -5,6 +5,7 @@ import com.example.demo.entity.JCourseTeacher;
 import com.example.demo.entity.JTeacher;
 import com.example.demo.mapper.CourseTeacherMapper;
 import com.example.demo.model.CourseTeacher;
+import com.example.demo.model.CourseTeacherId;
 import com.example.demo.repository.CourseRepository;
 import com.example.demo.repository.CourseTeacherRepository;
 import com.example.demo.repository.TeacherRepository;
@@ -50,5 +51,51 @@ public class CourseTeacherService {
 
     JCourseTeacher saved = courseTeacherRepository.save(entity);
     return CourseTeacherMapper.toModel(saved);
+  }
+
+  public CourseTeacher getCourseTeacherById(String courseId, String teacherId) {
+    JCourseTeacher entity =
+        courseTeacherRepository
+            .findById(new CourseTeacherId(courseId, teacherId))
+            .orElseThrow(
+                () ->
+                    new RuntimeException(
+                        "CourseTeacher not found with courseId: "
+                            + courseId
+                            + " and teacherId: "
+                            + teacherId));
+    return CourseTeacherMapper.toModel(entity);
+  }
+
+  public CourseTeacher updateCourseTeacher(String courseId, String teacherId, CourseTeacher model) {
+    JCourseTeacher existing =
+        courseTeacherRepository
+            .findById(new CourseTeacherId(courseId, teacherId))
+            .orElseThrow(
+                () ->
+                    new RuntimeException(
+                        "CourseTeacher not found with courseId: "
+                            + courseId
+                            + " and teacherId: "
+                            + teacherId));
+
+    if (model.getAssignedAt() != null) {
+      existing.setAssignedAt(model.getAssignedAt());
+    }
+    if (model.getIsPrimary() != null) {
+      existing.setIsPrimary(model.getIsPrimary());
+    }
+
+    JCourseTeacher saved = courseTeacherRepository.save(existing);
+    return CourseTeacherMapper.toModel(saved);
+  }
+
+  public void deleteCourseTeacher(String courseId, String teacherId) {
+    CourseTeacherId id = new CourseTeacherId(courseId, teacherId);
+    if (!courseTeacherRepository.existsById(id)) {
+      throw new RuntimeException(
+          "CourseTeacher not found with courseId: " + courseId + " and teacherId: " + teacherId);
+    }
+    courseTeacherRepository.deleteById(id);
   }
 }

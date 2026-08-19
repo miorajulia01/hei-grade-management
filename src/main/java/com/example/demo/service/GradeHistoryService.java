@@ -66,4 +66,10 @@ public class GradeHistoryService {
     JGradeHistory saved = gradeHistoryRepository.save(entity);
     return GradeHistoryMapper.toModel(saved);
   }
+
+  public List<GradeHistory> getGradeHistoriesByGrade(String gradeId) {
+    return gradeHistoryRepository.findByGradeId(gradeId).stream()
+        .map(GradeHistoryMapper::toModel)
+        .toList();
+  }
 }
