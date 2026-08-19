@@ -37,4 +37,23 @@ public class AcademicYearService {
     JAcademicYear saved = academicYearRepository.save(entity);
     return AcademicYearMapper.toModel(saved);
   }
+
+  public AcademicYear updateAcademicYear(String id, AcademicYear model) {
+    JAcademicYear existing =
+        academicYearRepository
+            .findById(id)
+            .orElseThrow(() -> new RuntimeException("Academic year not found with id: " + id));
+    existing.setLabel(model.getLabel());
+    existing.setStartDate(model.getStartDate());
+    existing.setEndDate(model.getEndDate());
+    JAcademicYear saved = academicYearRepository.save(existing);
+    return AcademicYearMapper.toModel(saved);
+  }
+
+  public void deleteAcademicYear(String id) {
+    if (!academicYearRepository.existsById(id)) {
+      throw new RuntimeException("Academic year not found with id: " + id);
+    }
+    academicYearRepository.deleteById(id);
+  }
 }

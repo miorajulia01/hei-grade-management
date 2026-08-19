@@ -49,4 +49,31 @@ public class PromotionService {
     JPromotion saved = promotionRepository.save(entity);
     return PromotionMapper.toModel(saved);
   }
+
+  public Promotion updatePromotion(String id, Promotion model) {
+    JPromotion existing =
+        promotionRepository
+            .findById(id)
+            .orElseThrow(() -> new RuntimeException("Promotion not found with id: " + id));
+
+    if (model.getAcademicYear() != null && model.getAcademicYear().getId() != null) {
+      JAcademicYear academicYear =
+          academicYearRepository
+              .findById(model.getAcademicYear().getId())
+              .orElseThrow(() -> new RuntimeException("Academic year not found"));
+      existing.setAcademicYear(academicYear);
+    }
+    existing.setRef(model.getRef());
+    existing.setLabel(model.getLabel());
+
+    JPromotion saved = promotionRepository.save(existing);
+    return PromotionMapper.toModel(saved);
+  }
+
+  public void deletePromotion(String id) {
+    if (!promotionRepository.existsById(id)) {
+      throw new RuntimeException("Promotion not found with id: " + id);
+    }
+    promotionRepository.deleteById(id);
+  }
 }

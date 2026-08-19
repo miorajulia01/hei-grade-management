@@ -8,6 +8,7 @@ import com.example.demo.entity.JCourse;
 import com.example.demo.entity.JCourseTeacher;
 import com.example.demo.entity.JTeacher;
 import com.example.demo.model.CourseTeacher;
+import com.example.demo.model.CourseTeacherId;
 import com.example.demo.repository.CourseRepository;
 import com.example.demo.repository.CourseTeacherRepository;
 import com.example.demo.repository.TeacherRepository;
@@ -200,5 +201,108 @@ class CourseTeacherServiceTest {
 
     verify(teacherRepository).findById("unknown");
     verify(courseTeacherRepository, never()).save(any());
+  }
+
+  @Test
+  void shouldGetCourseTeacherById() {
+    CourseTeacherId id = new CourseTeacherId("course-1", "teacher-1");
+
+    when(courseTeacherRepository.findById(id)).thenReturn(Optional.of(courseTeacherEntity));
+
+    CourseTeacher result = courseTeacherService.getCourseTeacherById("course-1", "teacher-1");
+
+    assertNotNull(result);
+    assertTrue(result.getIsPrimary());
+
+    verify(courseTeacherRepository).findById(id);
+  }
+
+  @Test
+  void shouldThrowExceptionWhenCourseTeacherNotFound() {
+    CourseTeacherId id = new CourseTeacherId("unknown-course", "unknown-teacher");
+
+    when(courseTeacherRepository.findById(id)).thenReturn(Optional.empty());
+
+    RuntimeException exception =
+        assertThrows(
+            RuntimeException.class,
+            () -> courseTeacherService.getCourseTeacherById("unknown-course", "unknown-teacher"));
+
+    assertEquals(
+        "CourseTeacher not found with courseId: unknown-course and teacherId: unknown-teacher",
+        exception.getMessage());
+
+    verify(courseTeacherRepository).findById(id);
+  }
+
+  @Test
+  void shouldUpdateCourseTeacher() {
+    CourseTeacherId id = new CourseTeacherId("course-1", "teacher-1");
+
+    when(courseTeacherRepository.findById(id)).thenReturn(Optional.of(courseTeacherEntity));
+
+    CourseTeacher model = CourseTeacher.builder().isPrimary(false).build();
+
+    JCourseTeacher updatedEntity = JCourseTeacher.builder().isPrimary(false).build();
+
+    when(courseTeacherRepository.save(any(JCourseTeacher.class))).thenReturn(updatedEntity);
+
+    CourseTeacher result = courseTeacherService.updateCourseTeacher("course-1", "teacher-1", model);
+
+    assertNotNull(result);
+    assertFalse(result.getIsPrimary());
+
+    verify(courseTeacherRepository).findById(id);
+    verify(courseTeacherRepository).save(any(JCourseTeacher.class));
+  }
+
+  @Test
+  void shouldThrowExceptionWhenUpdatingCourseTeacherNotFound() {
+    CourseTeacherId id = new CourseTeacherId("unknown-course", "unknown-teacher");
+
+    when(courseTeacherRepository.findById(id)).thenReturn(Optional.empty());
+
+    RuntimeException exception =
+        assertThrows(
+            RuntimeException.class,
+            () ->
+                courseTeacherService.updateCourseTeacher(
+                    "unknown-course", "unknown-teacher", CourseTeacher.builder().build()));
+
+    assertEquals(
+        "CourseTeacher not found with courseId: unknown-course and teacherId: unknown-teacher",
+        exception.getMessage());
+
+    verify(courseTeacherRepository).findById(id);
+    verify(courseTeacherRepository, never()).save(any());
+  }
+
+  @Test
+  void shouldDeleteCourseTeacher() {
+    CourseTeacherId id = new CourseTeacherId("course-1", "teacher-1");
+
+    when(courseTeacherRepository.existsById(id)).thenReturn(true);
+
+    courseTeacherService.deleteCourseTeacher("course-1", "teacher-1");
+
+    verify(courseTeacherRepository).deleteById(id);
+  }
+
+  @Test
+  void shouldThrowExceptionWhenDeletingCourseTeacherNotFound() {
+    CourseTeacherId id = new CourseTeacherId("unknown-course", "unknown-teacher");
+
+    when(courseTeacherRepository.existsById(id)).thenReturn(false);
+
+    RuntimeException exception =
+        assertThrows(
+            RuntimeException.class,
+            () -> courseTeacherService.deleteCourseTeacher("unknown-course", "unknown-teacher"));
+
+    assertEquals(
+        "CourseTeacher not found with courseId: unknown-course and teacherId: unknown-teacher",
+        exception.getMessage());
+
+    verify(courseTeacherRepository, never()).deleteById(id);
   }
 }

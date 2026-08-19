@@ -142,4 +142,11 @@ public class GradeService {
         .map(GradeMapper::toModel)
         .toList();
   }
+
+  public void deleteGrade(String id) {
+    if (!gradeRepository.existsById(id)) {
+      throw new RuntimeException("Grade not found with id: " + id);
+    }
+    gradeRepository.deleteById(id);
+  }
 }

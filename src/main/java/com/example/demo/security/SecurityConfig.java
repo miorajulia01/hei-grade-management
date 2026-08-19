@@ -63,16 +63,51 @@ public class SecurityConfig {
                         "/group-assignments",
                         "/semesters",
                         "/courses",
-                        "/course-teachers")
+                        "/course-teachers",
+                        "/doc-exports")
+                    .hasRole("ADMIN")
+                    .requestMatchers(
+                        HttpMethod.PUT,
+                        "/users/**",
+                        "/teachers/**",
+                        "/students/**",
+                        "/academic-years/**",
+                        "/promotions/**",
+                        "/programs/**",
+                        "/groups/**",
+                        "/group-assignments/**",
+                        "/semesters/**",
+                        "/courses/**",
+                        "/course-teachers/**",
+                        "/doc-exports/**")
+                    .hasRole("ADMIN")
+                    .requestMatchers(
+                        HttpMethod.DELETE,
+                        "/users/**",
+                        "/teachers/**",
+                        "/students/**",
+                        "/academic-years/**",
+                        "/promotions/**",
+                        "/programs/**",
+                        "/groups/**",
+                        "/group-assignments/**",
+                        "/semesters/**",
+                        "/courses/**",
+                        "/course-teachers/**",
+                        "/exams/**",
+                        "/grades/**",
+                        "/doc-exports/**")
                     .hasRole("ADMIN")
                     .requestMatchers(HttpMethod.POST, "/exams", "/grades")
                     .hasAnyRole("ADMIN", "TEACHER")
                     .requestMatchers(HttpMethod.PUT, "/grades/**")
                     .hasAnyRole("ADMIN", "TEACHER")
-                    .requestMatchers(HttpMethod.GET, "/students", "/grades", "/grade-histories")
+                    .requestMatchers(HttpMethod.GET, "/students", "/grades", "/grade-histories/**")
                     .hasAnyRole("ADMIN", "TEACHER")
                     .requestMatchers(HttpMethod.GET, "/promotions/*/graduates")
                     .hasAnyRole("ADMIN", "TEACHER")
+                    .requestMatchers(HttpMethod.GET, "/doc-exports/**")
+                    .hasRole("ADMIN")
                     .anyRequest()
                     .authenticated())
         .authenticationProvider(authenticationProvider())

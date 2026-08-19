@@ -271,4 +271,143 @@ class CourseServiceTest {
     verify(semesterRepository).findById("unknown");
     verify(courseRepository, never()).save(any());
   }
+
+  @Test
+  void shouldUpdateCourse() {
+    when(courseRepository.findById("course-1")).thenReturn(Optional.of(courseEntity));
+
+    Course model =
+        Course.builder()
+            .id("course-1")
+            .ref("WEB")
+            .title("Web Development")
+            .credit(4)
+            .type("LECTURE")
+            .isActive(false)
+            .build();
+
+    JCourse updatedEntity =
+        JCourse.builder()
+            .id("course-1")
+            .ref("WEB")
+            .title("Web Development")
+            .credit(4)
+            .type("LECTURE")
+            .isActive(false)
+            .build();
+
+    when(courseRepository.save(any(JCourse.class))).thenReturn(updatedEntity);
+
+    Course result = courseService.updateCourse("course-1", model);
+
+    assertNotNull(result);
+    assertEquals("WEB", result.getRef());
+    assertEquals("Web Development", result.getTitle());
+    assertEquals(4, result.getCredit());
+    assertEquals("LECTURE", result.getType());
+    assertFalse(result.getIsActive());
+
+    verify(courseRepository).findById("course-1");
+    verify(courseRepository).save(any(JCourse.class));
+  }
+
+  @Test
+  void shouldUpdateCourseWithProgram() {
+    when(courseRepository.findById("course-1")).thenReturn(Optional.of(courseEntity));
+
+    JProgram program = JProgram.builder().id("program-1").build();
+
+    Course model =
+        Course.builder()
+            .id("course-1")
+            .ref("JAVA")
+            .title("Java Programming")
+            .credit(6)
+            .program(com.example.demo.model.Program.builder().id("program-1").build())
+            .build();
+
+    when(programRepository.findById("program-1")).thenReturn(Optional.of(program));
+
+    when(courseRepository.save(any(JCourse.class))).thenReturn(courseEntity);
+
+    courseService.updateCourse("course-1", model);
+
+    ArgumentCaptor<JCourse> captor = ArgumentCaptor.forClass(JCourse.class);
+
+    verify(courseRepository).save(captor.capture());
+
+    JCourse savedEntity = captor.getValue();
+
+    assertEquals(program, savedEntity.getProgram());
+
+    verify(programRepository).findById("program-1");
+  }
+
+  @Test
+  void shouldUpdateCourseWithSemester() {
+    when(courseRepository.findById("course-1")).thenReturn(Optional.of(courseEntity));
+
+    JSemester semester = JSemester.builder().id("semester-1").build();
+
+    Course model =
+        Course.builder()
+            .id("course-1")
+            .ref("JAVA")
+            .title("Java Programming")
+            .credit(6)
+            .semester(com.example.demo.model.Semester.builder().id("semester-1").build())
+            .build();
+
+    when(semesterRepository.findById("semester-1")).thenReturn(Optional.of(semester));
+
+    when(courseRepository.save(any(JCourse.class))).thenReturn(courseEntity);
+
+    courseService.updateCourse("course-1", model);
+
+    ArgumentCaptor<JCourse> captor = ArgumentCaptor.forClass(JCourse.class);
+
+    verify(courseRepository).save(captor.capture());
+
+    JCourse savedEntity = captor.getValue();
+
+    assertEquals(semester, savedEntity.getSemester());
+
+    verify(semesterRepository).findById("semester-1");
+  }
+
+  @Test
+  void shouldThrowExceptionWhenUpdatingCourseNotFound() {
+    when(courseRepository.findById("unknown")).thenReturn(Optional.empty());
+
+    RuntimeException exception =
+        assertThrows(
+            RuntimeException.class,
+            () -> courseService.updateCourse("unknown", Course.builder().build()));
+
+    assertEquals("Course not found with id: unknown", exception.getMessage());
+
+    verify(courseRepository).findById("unknown");
+    verify(courseRepository, never()).save(any());
+  }
+
+  @Test
+  void shouldDeleteCourse() {
+    when(courseRepository.existsById("course-1")).thenReturn(true);
+
+    courseService.deleteCourse("course-1");
+
+    verify(courseRepository).deleteById("course-1");
+  }
+
+  @Test
+  void shouldThrowExceptionWhenDeletingCourseNotFound() {
+    when(courseRepository.existsById("unknown")).thenReturn(false);
+
+    RuntimeException exception =
+        assertThrows(RuntimeException.class, () -> courseService.deleteCourse("unknown"));
+
+    assertEquals("Course not found with id: unknown", exception.getMessage());
+
+    verify(courseRepository, never()).deleteById("unknown");
+  }
 }

@@ -287,4 +287,31 @@ class GradeHistoryServiceTest {
 
     verify(gradeHistoryRepository, never()).save(any());
   }
+
+  @Test
+  void shouldGetGradeHistoriesByGrade() {
+    when(gradeHistoryRepository.findByGradeId("grade-1")).thenReturn(List.of(historyEntity));
+
+    List<GradeHistory> result = gradeHistoryService.getGradeHistoriesByGrade("grade-1");
+
+    assertNotNull(result);
+    assertEquals(1, result.size());
+    assertEquals("history-1", result.get(0).getId());
+    assertEquals(10.0, result.get(0).getOldScore());
+    assertEquals(15.0, result.get(0).getNewScore());
+
+    verify(gradeHistoryRepository).findByGradeId("grade-1");
+  }
+
+  @Test
+  void shouldReturnEmptyListWhenGradeHasNoHistory() {
+    when(gradeHistoryRepository.findByGradeId("grade-1")).thenReturn(List.of());
+
+    List<GradeHistory> result = gradeHistoryService.getGradeHistoriesByGrade("grade-1");
+
+    assertNotNull(result);
+    assertTrue(result.isEmpty());
+
+    verify(gradeHistoryRepository).findByGradeId("grade-1");
+  }
 }

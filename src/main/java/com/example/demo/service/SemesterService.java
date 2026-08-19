@@ -52,4 +52,34 @@ public class SemesterService {
     JSemester saved = semesterRepository.save(entity);
     return SemesterMapper.toModel(saved);
   }
+
+  public Semester updateSemester(String id, Semester model) {
+    JSemester existing =
+        semesterRepository
+            .findById(id)
+            .orElseThrow(() -> new RuntimeException("Semester not found with id: " + id));
+
+    if (model.getAcademicYear() != null && model.getAcademicYear().getId() != null) {
+      JAcademicYear academicYear =
+          academicYearRepository
+              .findById(model.getAcademicYear().getId())
+              .orElseThrow(() -> new RuntimeException("Academic year not found"));
+      existing.setAcademicYear(academicYear);
+    }
+    existing.setCode(model.getCode());
+    existing.setLabel(model.getLabel());
+    existing.setOrder(model.getOrder());
+    existing.setStartDate(model.getStartDate());
+    existing.setEndDate(model.getEndDate());
+
+    JSemester saved = semesterRepository.save(existing);
+    return SemesterMapper.toModel(saved);
+  }
+
+  public void deleteSemester(String id) {
+    if (!semesterRepository.existsById(id)) {
+      throw new RuntimeException("Semester not found with id: " + id);
+    }
+    semesterRepository.deleteById(id);
+  }
 }

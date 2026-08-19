@@ -169,4 +169,74 @@ class StudentServiceTest {
     verify(promotionRepository).findById("promotion-1");
     verify(studentRepository, never()).save(any());
   }
+
+  @Test
+  void shouldUpdateStudent() {
+    when(studentRepository.findById("student-1")).thenReturn(Optional.of(studentEntity));
+
+    Student model =
+        Student.builder()
+            .id("student-1")
+            .studentNumber("STD002")
+            .firstName("Jean")
+            .lastName("Rakoto")
+            .email("jean@example.com")
+            .build();
+
+    JStudent updatedEntity =
+        JStudent.builder()
+            .id("student-1")
+            .studentNumber("STD002")
+            .firstName("Jean")
+            .lastName("Rakoto")
+            .email("jean@example.com")
+            .build();
+
+    when(studentRepository.save(any(JStudent.class))).thenReturn(updatedEntity);
+
+    Student result = studentService.updateStudent("student-1", model);
+
+    assertNotNull(result);
+    assertEquals("STD002", result.getStudentNumber());
+    assertEquals("jean@example.com", result.getEmail());
+
+    verify(studentRepository).findById("student-1");
+    verify(studentRepository).save(any(JStudent.class));
+  }
+
+  @Test
+  void shouldThrowExceptionWhenUpdatingStudentNotFound() {
+    when(studentRepository.findById("unknown")).thenReturn(Optional.empty());
+
+    RuntimeException exception =
+        assertThrows(
+            RuntimeException.class,
+            () -> studentService.updateStudent("unknown", Student.builder().build()));
+
+    assertEquals("Student not found with id: unknown", exception.getMessage());
+
+    verify(studentRepository).findById("unknown");
+    verify(studentRepository, never()).save(any());
+  }
+
+  @Test
+  void shouldDeleteStudent() {
+    when(studentRepository.existsById("student-1")).thenReturn(true);
+
+    studentService.deleteStudent("student-1");
+
+    verify(studentRepository).deleteById("student-1");
+  }
+
+  @Test
+  void shouldThrowExceptionWhenDeletingStudentNotFound() {
+    when(studentRepository.existsById("unknown")).thenReturn(false);
+
+    RuntimeException exception =
+        assertThrows(RuntimeException.class, () -> studentService.deleteStudent("unknown"));
+
+    assertEquals("Student not found with id: unknown", exception.getMessage());
+
+    verify(studentRepository, never()).deleteById("unknown");
+  }
 }

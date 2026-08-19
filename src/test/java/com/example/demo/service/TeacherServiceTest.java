@@ -223,4 +223,75 @@ class TeacherServiceTest {
     assertEquals(StatusEnum.ACTIVE, saved.getStatus());
     assertNull(saved.getUser());
   }
+
+  @Test
+  void shouldUpdateTeacher() {
+    when(teacherRepository.findById("teacher-1")).thenReturn(Optional.of(teacherEntity));
+
+    Teacher model =
+        Teacher.builder()
+            .id("teacher-1")
+            .firstName("Paul")
+            .lastName("Rabe")
+            .specialty("Networking")
+            .status(StatusEnum.ACTIVE)
+            .build();
+
+    JTeacher updatedEntity =
+        JTeacher.builder()
+            .id("teacher-1")
+            .firstName("Paul")
+            .lastName("Rabe")
+            .specialty("Networking")
+            .status(StatusEnum.ACTIVE)
+            .build();
+
+    when(teacherRepository.save(any(JTeacher.class))).thenReturn(updatedEntity);
+
+    Teacher result = teacherService.updateTeacher("teacher-1", model);
+
+    assertNotNull(result);
+    assertEquals("Paul", result.getFirstName());
+    assertEquals("Rabe", result.getLastName());
+    assertEquals("Networking", result.getSpecialty());
+
+    verify(teacherRepository).findById("teacher-1");
+    verify(teacherRepository).save(any(JTeacher.class));
+  }
+
+  @Test
+  void shouldThrowExceptionWhenUpdatingTeacherNotFound() {
+    when(teacherRepository.findById("unknown")).thenReturn(Optional.empty());
+
+    RuntimeException exception =
+        assertThrows(
+            RuntimeException.class,
+            () -> teacherService.updateTeacher("unknown", Teacher.builder().build()));
+
+    assertEquals("Teacher not found with id: unknown", exception.getMessage());
+
+    verify(teacherRepository).findById("unknown");
+    verify(teacherRepository, never()).save(any());
+  }
+
+  @Test
+  void shouldDeleteTeacher() {
+    when(teacherRepository.existsById("teacher-1")).thenReturn(true);
+
+    teacherService.deleteTeacher("teacher-1");
+
+    verify(teacherRepository).deleteById("teacher-1");
+  }
+
+  @Test
+  void shouldThrowExceptionWhenDeletingTeacherNotFound() {
+    when(teacherRepository.existsById("unknown")).thenReturn(false);
+
+    RuntimeException exception =
+        assertThrows(RuntimeException.class, () -> teacherService.deleteTeacher("unknown"));
+
+    assertEquals("Teacher not found with id: unknown", exception.getMessage());
+
+    verify(teacherRepository, never()).deleteById("unknown");
+  }
 }
