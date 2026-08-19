@@ -37,4 +37,25 @@ public class ProgramService {
     JProgram saved = programRepository.save(entity);
     return ProgramMapper.toModel(saved);
   }
+
+  public Program updateProgram(String id, Program model) {
+    JProgram existing =
+        programRepository
+            .findById(id)
+            .orElseThrow(() -> new RuntimeException("Program not found with id: " + id));
+
+    existing.setCode(model.getCode());
+    existing.setLabel(model.getLabel());
+    existing.setDescription(model.getDescription());
+
+    JProgram saved = programRepository.save(existing);
+    return ProgramMapper.toModel(saved);
+  }
+
+  public void deleteProgram(String id) {
+    if (!programRepository.existsById(id)) {
+      throw new RuntimeException("Program not found with id: " + id);
+    }
+    programRepository.deleteById(id);
+  }
 }
