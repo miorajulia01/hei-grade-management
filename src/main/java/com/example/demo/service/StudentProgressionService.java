@@ -59,6 +59,14 @@ public class StudentProgressionService {
     return validatedCourses.values().stream().mapToInt(JCourse::getCredit).sum();
   }
 
+  public boolean hasAllCoursesValidated(String studentId) {
+    List<JGrade> grades = gradeRepository.findByStudentId(studentId);
+
+    return !getFinalGrades(grades).values().stream()
+        .filter(grade -> grade.getScore() != null)
+        .anyMatch(grade -> getFinalScore(grade) < 10.0);
+  }
+
   public boolean isRepeating(String studentId) {
     return calculateAverage(studentId) < 10.0;
   }
