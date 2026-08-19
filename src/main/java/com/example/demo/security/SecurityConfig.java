@@ -91,13 +91,15 @@ public class SecurityConfig {
                         "/group-assignments/**",
                         "/semesters/**",
                         "/courses/**",
-                        "/course-teachers/**")
+                        "/course-teachers/**",
+                        "/exams/**",
+                        "/grades/**")
                     .hasRole("ADMIN")
                     .requestMatchers(HttpMethod.POST, "/exams", "/grades")
                     .hasAnyRole("ADMIN", "TEACHER")
                     .requestMatchers(HttpMethod.PUT, "/grades/**")
                     .hasAnyRole("ADMIN", "TEACHER")
-                    .requestMatchers(HttpMethod.GET, "/students", "/grades", "/grade-histories")
+                    .requestMatchers(HttpMethod.GET, "/students", "/grades", "/grade-histories/**")
                     .hasAnyRole("ADMIN", "TEACHER")
                     .requestMatchers(HttpMethod.GET, "/promotions/*/graduates")
                     .hasAnyRole("ADMIN", "TEACHER")
