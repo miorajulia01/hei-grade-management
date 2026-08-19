@@ -19,7 +19,9 @@ public class DiplomaService {
     double average = studentProgressionService.calculateAverage(studentId);
     int credits = studentProgressionService.calculateValidatedCredits(studentId);
 
-    return average >= 10.0 && credits >= 180;
+    return average >= 10.0
+        && credits >= 180
+        && studentProgressionService.hasAllCoursesValidated(studentId);
   }
 
   public List<Diploma> getGraduatesByPromotion(String promotionId) {

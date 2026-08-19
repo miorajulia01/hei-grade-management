@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title th:text="'Diplômés - ' + ${promotion.label}">Diplômés</title>
+  </head>
+  <body>
+    <main>
+      <a th:href="@{/diplomas/promotions}">Retour aux promotions</a>
+      <h1 th:text="'Diplômés de ' + ${promotion.label}">Diplômés</h1>
+
+      <p>
+        <a th:href="@{/diplomas/promotions/{id}/export(id=${promotion.id})}">
+          Télécharger la liste Excel
+        </a>
+      </p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Rang</th>
+            <th>Matricule</th>
+            <th>Nom</th>
+            <th>Prénom</th>
+            <th>Moyenne générale</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr th:each="graduate : ${graduates}">
+            <td th:text="${graduate.rank}">1</td>
+            <td th:text="${graduate.studentNumber}">STD001</td>
+            <td th:text="${graduate.lastName}">Rakoto</td>
+            <td th:text="${graduate.firstName}">Jean</td>
+            <td th:text="${#numbers.formatDecimal(graduate.average, 1, 2)}">
+              12.50
+            </td>
+          </tr>
+          <tr th:if="${#lists.isEmpty(graduates)}">
+            <td colspan="5">Aucun diplômé pour cette promotion.</td>
+          </tr>
+        </tbody>
+      </table>
+    </main>
+  </body>
+</html>

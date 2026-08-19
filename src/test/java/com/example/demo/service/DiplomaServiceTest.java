@@ -35,6 +35,7 @@ class DiplomaServiceTest {
     when(studentProgressionService.calculateAverage("student-1")).thenReturn(12.5);
 
     when(studentProgressionService.calculateValidatedCredits("student-1")).thenReturn(180);
+    when(studentProgressionService.hasAllCoursesValidated("student-1")).thenReturn(true);
 
     assertTrue(diplomaService.isGraduate("student-1"));
   }
@@ -53,6 +54,15 @@ class DiplomaServiceTest {
     when(studentProgressionService.calculateAverage("student-1")).thenReturn(12.0);
 
     when(studentProgressionService.calculateValidatedCredits("student-1")).thenReturn(175);
+
+    assertFalse(diplomaService.isGraduate("student-1"));
+  }
+
+  @Test
+  void shouldNotGraduateWhenAtLeastOneFinalCourseIsBelow10() {
+    when(studentProgressionService.calculateAverage("student-1")).thenReturn(10.0);
+    when(studentProgressionService.calculateValidatedCredits("student-1")).thenReturn(180);
+    when(studentProgressionService.hasAllCoursesValidated("student-1")).thenReturn(false);
 
     assertFalse(diplomaService.isGraduate("student-1"));
   }
@@ -85,6 +95,10 @@ class DiplomaServiceTest {
     when(studentProgressionService.calculateValidatedCredits("student-1")).thenReturn(180);
 
     when(studentProgressionService.calculateValidatedCredits("student-2")).thenReturn(180);
+
+    when(studentProgressionService.hasAllCoursesValidated("student-1")).thenReturn(true);
+
+    when(studentProgressionService.hasAllCoursesValidated("student-2")).thenReturn(true);
 
     List<Diploma> result = diplomaService.getGraduatesByPromotion("promotion-1");
 
