@@ -25,219 +25,202 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class TeacherServiceTest {
 
-    @Mock
-    private TeacherRepository teacherRepository;
+  @Mock private TeacherRepository teacherRepository;
 
-    @Mock
-    private UserRepository userRepository;
+  @Mock private UserRepository userRepository;
 
-    @InjectMocks
-    private TeacherService teacherService;
+  @InjectMocks private TeacherService teacherService;
 
-    private JTeacher teacherEntity;
+  private JTeacher teacherEntity;
 
-    @BeforeEach
-    void setUp() {
-        teacherEntity =
-                JTeacher.builder()
-                        .id("teacher-1")
-                        .firstName("Jean")
-                        .lastName("Rakoto")
-                        .specialty("Programming")
-                        .status(StatusEnum.ACTIVE)
-                        .build();
-    }
+  @BeforeEach
+  void setUp() {
+    teacherEntity =
+        JTeacher.builder()
+            .id("teacher-1")
+            .firstName("Jean")
+            .lastName("Rakoto")
+            .specialty("Programming")
+            .status(StatusEnum.ACTIVE)
+            .build();
+  }
 
-    @Test
-    void shouldGetAllTeachers() {
-        when(teacherRepository.findAll()).thenReturn(List.of(teacherEntity));
+  @Test
+  void shouldGetAllTeachers() {
+    when(teacherRepository.findAll()).thenReturn(List.of(teacherEntity));
 
-        List<Teacher> result = teacherService.getAllTeachers();
+    List<Teacher> result = teacherService.getAllTeachers();
 
-        assertEquals(1, result.size());
-        assertEquals("teacher-1", result.get(0).getId());
-        assertEquals("Jean", result.get(0).getFirstName());
-        assertEquals("Rakoto", result.get(0).getLastName());
+    assertEquals(1, result.size());
+    assertEquals("teacher-1", result.get(0).getId());
+    assertEquals("Jean", result.get(0).getFirstName());
+    assertEquals("Rakoto", result.get(0).getLastName());
 
-        verify(teacherRepository).findAll();
-    }
+    verify(teacherRepository).findAll();
+  }
 
-    @Test
-    void shouldGetTeacherById() {
-        when(teacherRepository.findById("teacher-1"))
-                .thenReturn(Optional.of(teacherEntity));
+  @Test
+  void shouldGetTeacherById() {
+    when(teacherRepository.findById("teacher-1")).thenReturn(Optional.of(teacherEntity));
 
-        Teacher result = teacherService.getTeacherById("teacher-1");
+    Teacher result = teacherService.getTeacherById("teacher-1");
 
-        assertNotNull(result);
-        assertEquals("teacher-1", result.getId());
-        assertEquals("Jean", result.getFirstName());
-        assertEquals("Rakoto", result.getLastName());
-        assertEquals("Programming", result.getSpecialty());
+    assertNotNull(result);
+    assertEquals("teacher-1", result.getId());
+    assertEquals("Jean", result.getFirstName());
+    assertEquals("Rakoto", result.getLastName());
+    assertEquals("Programming", result.getSpecialty());
 
-        verify(teacherRepository).findById("teacher-1");
-    }
+    verify(teacherRepository).findById("teacher-1");
+  }
 
-    @Test
-    void shouldThrowExceptionWhenTeacherNotFound() {
-        when(teacherRepository.findById("unknown"))
-                .thenReturn(Optional.empty());
+  @Test
+  void shouldThrowExceptionWhenTeacherNotFound() {
+    when(teacherRepository.findById("unknown")).thenReturn(Optional.empty());
 
-        RuntimeException exception =
-                assertThrows(
-                        RuntimeException.class,
-                        () -> teacherService.getTeacherById("unknown"));
+    RuntimeException exception =
+        assertThrows(RuntimeException.class, () -> teacherService.getTeacherById("unknown"));
 
-        assertEquals(
-                "Teacher not found with id: unknown",
-                exception.getMessage());
+    assertEquals("Teacher not found with id: unknown", exception.getMessage());
 
-        verify(teacherRepository).findById("unknown");
-    }
+    verify(teacherRepository).findById("unknown");
+  }
 
-    @Test
-    void shouldSaveTeacherWithoutUser() {
-        Teacher model =
-                Teacher.builder()
-                        .id("teacher-1")
-                        .firstName("Jean")
-                        .lastName("Rakoto")
-                        .specialty("Programming")
-                        .status(StatusEnum.ACTIVE)
-                        .build();
+  @Test
+  void shouldSaveTeacherWithoutUser() {
+    Teacher model =
+        Teacher.builder()
+            .id("teacher-1")
+            .firstName("Jean")
+            .lastName("Rakoto")
+            .specialty("Programming")
+            .status(StatusEnum.ACTIVE)
+            .build();
 
-        when(teacherRepository.save(any(JTeacher.class)))
-                .thenReturn(teacherEntity);
+    when(teacherRepository.save(any(JTeacher.class))).thenReturn(teacherEntity);
 
-        Teacher result = teacherService.saveTeacher(model);
+    Teacher result = teacherService.saveTeacher(model);
 
-        assertNotNull(result);
-        assertEquals("teacher-1", result.getId());
-        assertEquals("Jean", result.getFirstName());
-        assertEquals("Rakoto", result.getLastName());
-        assertEquals("Programming", result.getSpecialty());
+    assertNotNull(result);
+    assertEquals("teacher-1", result.getId());
+    assertEquals("Jean", result.getFirstName());
+    assertEquals("Rakoto", result.getLastName());
+    assertEquals("Programming", result.getSpecialty());
 
-        verify(teacherRepository).save(any(JTeacher.class));
-        verifyNoInteractions(userRepository);
-    }
+    verify(teacherRepository).save(any(JTeacher.class));
+    verifyNoInteractions(userRepository);
+  }
 
-    @Test
-    void shouldSaveTeacherWithUser() {
-        JUser userEntity =
-                JUser.builder()
-                        .id("user-1")
-                        .email("teacher@hei.school")
-                        .role(UserRole.TEACHER)
-                        .status(StatusEnum.ACTIVE)
-                        .build();
+  @Test
+  void shouldSaveTeacherWithUser() {
+    JUser userEntity =
+        JUser.builder()
+            .id("user-1")
+            .email("teacher@hei.school")
+            .role(UserRole.TEACHER)
+            .status(StatusEnum.ACTIVE)
+            .build();
 
-        User userModel =
-                User.builder()
-                        .id("user-1")
-                        .email("teacher@hei.school")
-                        .role(UserRole.TEACHER)
-                        .status(StatusEnum.ACTIVE)
-                        .build();
+    User userModel =
+        User.builder()
+            .id("user-1")
+            .email("teacher@hei.school")
+            .role(UserRole.TEACHER)
+            .status(StatusEnum.ACTIVE)
+            .build();
 
-        Teacher model =
-                Teacher.builder()
-                        .id("teacher-1")
-                        .user(userModel)
-                        .firstName("Jean")
-                        .lastName("Rakoto")
-                        .specialty("Programming")
-                        .status(StatusEnum.ACTIVE)
-                        .build();
+    Teacher model =
+        Teacher.builder()
+            .id("teacher-1")
+            .user(userModel)
+            .firstName("Jean")
+            .lastName("Rakoto")
+            .specialty("Programming")
+            .status(StatusEnum.ACTIVE)
+            .build();
 
-        JTeacher savedTeacher =
-                JTeacher.builder()
-                        .id("teacher-1")
-                        .user(userEntity)
-                        .firstName("Jean")
-                        .lastName("Rakoto")
-                        .specialty("Programming")
-                        .status(StatusEnum.ACTIVE)
-                        .build();
+    JTeacher savedTeacher =
+        JTeacher.builder()
+            .id("teacher-1")
+            .user(userEntity)
+            .firstName("Jean")
+            .lastName("Rakoto")
+            .specialty("Programming")
+            .status(StatusEnum.ACTIVE)
+            .build();
 
-        when(userRepository.findById("user-1"))
-                .thenReturn(Optional.of(userEntity));
+    when(userRepository.findById("user-1")).thenReturn(Optional.of(userEntity));
 
-        when(teacherRepository.save(any(JTeacher.class)))
-                .thenReturn(savedTeacher);
+    when(teacherRepository.save(any(JTeacher.class))).thenReturn(savedTeacher);
 
-        Teacher result = teacherService.saveTeacher(model);
+    Teacher result = teacherService.saveTeacher(model);
 
-        assertNotNull(result);
-        assertEquals("teacher-1", result.getId());
-        assertNotNull(result.getUser());
-        assertEquals("user-1", result.getUser().getId());
+    assertNotNull(result);
+    assertEquals("teacher-1", result.getId());
+    assertNotNull(result.getUser());
+    assertEquals("user-1", result.getUser().getId());
 
-        verify(userRepository).findById("user-1");
-        verify(teacherRepository).save(any(JTeacher.class));
-    }
+    verify(userRepository).findById("user-1");
+    verify(teacherRepository).save(any(JTeacher.class));
+  }
 
-    @Test
-    void shouldThrowExceptionWhenUserNotFound() {
-        User userModel =
-                User.builder()
-                        .id("unknown-user")
-                        .email("unknown@hei.school")
-                        .role(UserRole.TEACHER)
-                        .status(StatusEnum.ACTIVE)
-                        .build();
+  @Test
+  void shouldThrowExceptionWhenUserNotFound() {
+    User userModel =
+        User.builder()
+            .id("unknown-user")
+            .email("unknown@hei.school")
+            .role(UserRole.TEACHER)
+            .status(StatusEnum.ACTIVE)
+            .build();
 
-        Teacher model =
-                Teacher.builder()
-                        .id("teacher-1")
-                        .user(userModel)
-                        .firstName("Jean")
-                        .lastName("Rakoto")
-                        .specialty("Programming")
-                        .status(StatusEnum.ACTIVE)
-                        .build();
+    Teacher model =
+        Teacher.builder()
+            .id("teacher-1")
+            .user(userModel)
+            .firstName("Jean")
+            .lastName("Rakoto")
+            .specialty("Programming")
+            .status(StatusEnum.ACTIVE)
+            .build();
 
-        when(userRepository.findById("unknown-user"))
-                .thenReturn(Optional.empty());
+    when(userRepository.findById("unknown-user")).thenReturn(Optional.empty());
 
-        RuntimeException exception =
-                assertThrows(
-                        RuntimeException.class,
-                        () -> teacherService.saveTeacher(model));
+    RuntimeException exception =
+        assertThrows(RuntimeException.class, () -> teacherService.saveTeacher(model));
 
-        assertEquals("User not found", exception.getMessage());
+    assertEquals("User not found", exception.getMessage());
 
-        verify(userRepository).findById("unknown-user");
-        verify(teacherRepository, never()).save(any(JTeacher.class));
-    }
+    verify(userRepository).findById("unknown-user");
+    verify(teacherRepository, never()).save(any(JTeacher.class));
+  }
 
-    @Test
-    void shouldSaveTeacherWithCorrectData() {
-        Teacher model =
-                Teacher.builder()
-                        .id("teacher-1")
-                        .firstName("Jean")
-                        .lastName("Rakoto")
-                        .specialty("Artificial Intelligence")
-                        .status(StatusEnum.ACTIVE)
-                        .build();
+  @Test
+  void shouldSaveTeacherWithCorrectData() {
+    Teacher model =
+        Teacher.builder()
+            .id("teacher-1")
+            .firstName("Jean")
+            .lastName("Rakoto")
+            .specialty("Artificial Intelligence")
+            .status(StatusEnum.ACTIVE)
+            .build();
 
-        when(teacherRepository.save(any(JTeacher.class)))
-                .thenReturn(teacherEntity);
+    when(teacherRepository.save(any(JTeacher.class))).thenReturn(teacherEntity);
 
-        teacherService.saveTeacher(model);
+    teacherService.saveTeacher(model);
 
-        ArgumentCaptor<JTeacher> captor =
-                ArgumentCaptor.forClass(JTeacher.class);
+    ArgumentCaptor<JTeacher> captor = ArgumentCaptor.forClass(JTeacher.class);
 
-        verify(teacherRepository).save(captor.capture());
+    verify(teacherRepository).save(captor.capture());
 
-        JTeacher saved = captor.getValue();
+    JTeacher saved = captor.getValue();
 
-        assertEquals("teacher-1", saved.getId());
-        assertEquals("Jean", saved.getFirstName());
-        assertEquals("Rakoto", saved.getLastName());
-        assertEquals("Artificial Intelligence", saved.getSpecialty());
-        assertEquals(StatusEnum.ACTIVE, saved.getStatus());
-        assertNull(saved.getUser());
-    }
+    assertEquals("teacher-1", saved.getId());
+    assertEquals("Jean", saved.getFirstName());
+    assertEquals("Rakoto", saved.getLastName());
+    assertEquals("Artificial Intelligence", saved.getSpecialty());
+    assertEquals(StatusEnum.ACTIVE, saved.getStatus());
+    assertNull(saved.getUser());
+  }
 }

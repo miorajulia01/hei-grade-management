@@ -12,38 +12,38 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class DiplomaService {
 
-    private final StudentRepository studentRepository;
-    private final StudentProgressionService studentProgressionService;
+  private final StudentRepository studentRepository;
+  private final StudentProgressionService studentProgressionService;
 
-    public boolean isGraduate(String studentId) {
-        double average = studentProgressionService.calculateAverage(studentId);
-        int credits = studentProgressionService.calculateValidatedCredits(studentId);
+  public boolean isGraduate(String studentId) {
+    double average = studentProgressionService.calculateAverage(studentId);
+    int credits = studentProgressionService.calculateValidatedCredits(studentId);
 
-        return average >= 10.0 && credits >= 180;
+    return average >= 10.0 && credits >= 180;
+  }
+
+  public List<Diploma> getGraduatesByPromotion(String promotionId) {
+    List<Diploma> graduates =
+        studentRepository.findByPromotionId(promotionId).stream()
+            .filter(student -> isGraduate(student.getId()))
+            .map(this::toDiploma)
+            .sorted(Comparator.comparingDouble(Diploma::getAverage).reversed())
+            .toList();
+
+    for (int i = 0; i < graduates.size(); i++) {
+      graduates.get(i).setRank(i + 1);
     }
 
-    public List<Diploma> getGraduatesByPromotion(String promotionId) {
-        List<Diploma> graduates =
-                studentRepository.findByPromotionId(promotionId).stream()
-                        .filter(student -> isGraduate(student.getId()))
-                        .map(this::toDiploma)
-                        .sorted(Comparator.comparingDouble(Diploma::getAverage).reversed())
-                        .toList();
+    return graduates;
+  }
 
-        for (int i = 0; i < graduates.size(); i++) {
-            graduates.get(i).setRank(i + 1);
-        }
-
-        return graduates;
-    }
-
-    private Diploma toDiploma(JStudent student) {
-        return Diploma.builder()
-                .rank(0)
-                .studentNumber(student.getStudentNumber())
-                .firstName(student.getFirstName())
-                .lastName(student.getLastName())
-                .average(studentProgressionService.calculateAverage(student.getId()))
-                .build();
-    }
+  private Diploma toDiploma(JStudent student) {
+    return Diploma.builder()
+        .rank(0)
+        .studentNumber(student.getStudentNumber())
+        .firstName(student.getFirstName())
+        .lastName(student.getLastName())
+        .average(studentProgressionService.calculateAverage(student.getId()))
+        .build();
+  }
 }
