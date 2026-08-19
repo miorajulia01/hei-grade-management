@@ -11,7 +11,7 @@
       <h1 th:text="'Diplômés de ' + ${promotion.label}">Diplômés</h1>
 
       <p>
-        <a th:href="@{/promotions/{id}/graduates/export(id=${promotion.id})}">
+        <a th:href="@{/diplomas/promotions/{id}/export(id=${promotion.id})}">
           Télécharger la liste Excel
         </a>
       </p>
