@@ -7,6 +7,7 @@ import com.example.demo.service.GradeService;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
@@ -60,5 +61,11 @@ public class GradeController {
   public List<Grade> getRetakes(@PathVariable String studentId) {
     accessControlService.assertOwnStudentOrStaff(studentId);
     return gradeService.getRetakeGradesForStudent(studentId);
+  }
+
+  @DeleteMapping("/{id}")
+  public ResponseEntity<Void> delete(@PathVariable String id) {
+    gradeService.deleteGrade(id);
+    return ResponseEntity.noContent().build();
   }
 }
