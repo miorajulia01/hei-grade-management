@@ -10,9 +10,9 @@ import lombok.*;
 @AllArgsConstructor
 public class LoginRequestDto {
 
-    @NotBlank(message = "L'email est obligatoire")
-    private String email;
+  @NotBlank(message = "L'email est obligatoire")
+  private String email;
 
-    @NotBlank(message = "Le mot de passe est obligatoire")
-    private String password;
+  @NotBlank(message = "Le mot de passe est obligatoire")
+  private String password;
 }

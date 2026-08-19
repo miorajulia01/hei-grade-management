@@ -12,22 +12,22 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class StudentController {
 
-    private final StudentService studentService;
-    private final AccessControlService accessControlService;
+  private final StudentService studentService;
+  private final AccessControlService accessControlService;
 
-    @GetMapping
-    public List<Student> getAll() {
-        return studentService.getAllStudents();
-    }
+  @GetMapping
+  public List<Student> getAll() {
+    return studentService.getAllStudents();
+  }
 
-    @GetMapping("/{id}")
-    public Student getById(@PathVariable String id) {
-        accessControlService.assertOwnStudentOrStaff(id);
-        return studentService.getStudentById(id);
-    }
+  @GetMapping("/{id}")
+  public Student getById(@PathVariable String id) {
+    accessControlService.assertOwnStudentOrStaff(id);
+    return studentService.getStudentById(id);
+  }
 
-    @PostMapping
-    public Student create(@RequestBody Student student) {
-        return studentService.saveStudent(student);
-    }
+  @PostMapping
+  public Student create(@RequestBody Student student) {
+    return studentService.saveStudent(student);
+  }
 }

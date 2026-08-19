@@ -23,9 +23,9 @@ public class TeacherService {
 
   public Teacher getTeacherById(String id) {
     JTeacher entity =
-            teacherRepository
-                    .findById(id)
-                    .orElseThrow(() -> new RuntimeException("Teacher not found with id: " + id));
+        teacherRepository
+            .findById(id)
+            .orElseThrow(() -> new RuntimeException("Teacher not found with id: " + id));
     return TeacherMapper.toModel(entity);
   }
 
@@ -33,20 +33,20 @@ public class TeacherService {
     JUser user = null;
     if (model.getUser() != null && model.getUser().getId() != null) {
       user =
-              userRepository
-                      .findById(model.getUser().getId())
-                      .orElseThrow(() -> new RuntimeException("User not found"));
+          userRepository
+              .findById(model.getUser().getId())
+              .orElseThrow(() -> new RuntimeException("User not found"));
     }
 
     JTeacher entity =
-            JTeacher.builder()
-                    .id(model.getId())
-                    .user(user)
-                    .firstName(model.getFirstName())
-                    .lastName(model.getLastName())
-                    .specialty(model.getSpecialty())
-                    .status(model.getStatus())
-                    .build();
+        JTeacher.builder()
+            .id(model.getId())
+            .user(user)
+            .firstName(model.getFirstName())
+            .lastName(model.getLastName())
+            .specialty(model.getSpecialty())
+            .status(model.getStatus())
+            .build();
 
     JTeacher saved = teacherRepository.save(entity);
     return TeacherMapper.toModel(saved);

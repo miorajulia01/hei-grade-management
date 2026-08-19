@@ -22,61 +22,61 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final UserDetailsService userDetailsService;
-    private final JwtAuthFilter jwtAuthFilter;
+  private final UserDetailsService userDetailsService;
+  private final JwtAuthFilter jwtAuthFilter;
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+  @Bean
+  public PasswordEncoder passwordEncoder() {
+    return new BCryptPasswordEncoder();
+  }
 
-    @Bean
-    public AuthenticationProvider authenticationProvider() {
-        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setUserDetailsService(userDetailsService);
-        provider.setPasswordEncoder(passwordEncoder());
-        return provider;
-    }
+  @Bean
+  public AuthenticationProvider authenticationProvider() {
+    DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+    provider.setUserDetailsService(userDetailsService);
+    provider.setPasswordEncoder(passwordEncoder());
+    return provider;
+  }
 
-    @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration config)
-            throws Exception {
-        return config.getAuthenticationManager();
-    }
+  @Bean
+  public AuthenticationManager authenticationManager(AuthenticationConfiguration config)
+      throws Exception {
+    return config.getAuthenticationManager();
+  }
 
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.csrf(csrf -> csrf.disable())
-                .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(
-                        auth ->
-                                auth
-                                        .requestMatchers("/", "/auth/**").permitAll()
-                                        .requestMatchers(HttpMethod.POST, "/users", "/teachers", "/students")
-                                        .hasRole("ADMIN")
-                                        .requestMatchers(
-                                                HttpMethod.POST,
-                                                "/academic-years",
-                                                "/promotions",
-                                                "/programs",
-                                                "/groups",
-                                                "/group-assignments",
-                                                "/semesters",
-                                                "/courses",
-                                                "/course-teachers")
-                                        .hasRole("ADMIN")
-                                        .requestMatchers(HttpMethod.POST, "/exams", "/grades")
-                                        .hasAnyRole("ADMIN", "TEACHER")
-                                        .requestMatchers(HttpMethod.PUT, "/grades/**")
-                                        .hasAnyRole("ADMIN", "TEACHER")
-                                        .requestMatchers(HttpMethod.GET, "/students", "/grades", "/grade-histories")
-                                        .hasAnyRole("ADMIN", "TEACHER")
-                                        .requestMatchers(HttpMethod.GET, "/promotions/*/graduates")
-                                        .hasAnyRole("ADMIN", "TEACHER")
-                                        .anyRequest()
-                                        .authenticated())
-                .authenticationProvider(authenticationProvider())
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
-        return http.build();
-    }
+  @Bean
+  public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    http.csrf(csrf -> csrf.disable())
+        .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+        .authorizeHttpRequests(
+            auth ->
+                auth.requestMatchers("/", "/auth/**")
+                    .permitAll()
+                    .requestMatchers(HttpMethod.POST, "/users", "/teachers", "/students")
+                    .hasRole("ADMIN")
+                    .requestMatchers(
+                        HttpMethod.POST,
+                        "/academic-years",
+                        "/promotions",
+                        "/programs",
+                        "/groups",
+                        "/group-assignments",
+                        "/semesters",
+                        "/courses",
+                        "/course-teachers")
+                    .hasRole("ADMIN")
+                    .requestMatchers(HttpMethod.POST, "/exams", "/grades")
+                    .hasAnyRole("ADMIN", "TEACHER")
+                    .requestMatchers(HttpMethod.PUT, "/grades/**")
+                    .hasAnyRole("ADMIN", "TEACHER")
+                    .requestMatchers(HttpMethod.GET, "/students", "/grades", "/grade-histories")
+                    .hasAnyRole("ADMIN", "TEACHER")
+                    .requestMatchers(HttpMethod.GET, "/promotions/*/graduates")
+                    .hasAnyRole("ADMIN", "TEACHER")
+                    .anyRequest()
+                    .authenticated())
+        .authenticationProvider(authenticationProvider())
+        .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+    return http.build();
+  }
 }

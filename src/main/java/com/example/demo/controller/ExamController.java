@@ -12,22 +12,22 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class ExamController {
 
-    private final ExamService examService;
-    private final AccessControlService accessControlService;
+  private final ExamService examService;
+  private final AccessControlService accessControlService;
 
-    @GetMapping
-    public List<Exam> getAll() {
-        return examService.getAllExams();
-    }
+  @GetMapping
+  public List<Exam> getAll() {
+    return examService.getAllExams();
+  }
 
-    @GetMapping("/{id}")
-    public Exam getById(@PathVariable String id) {
-        return examService.getExamById(id);
-    }
+  @GetMapping("/{id}")
+  public Exam getById(@PathVariable String id) {
+    return examService.getExamById(id);
+  }
 
-    @PostMapping
-    public Exam create(@RequestBody Exam exam) {
-        accessControlService.assertTeachesCourseOrAdmin(exam.getCourse().getId());
-        return examService.saveExam(exam);
-    }
+  @PostMapping
+  public Exam create(@RequestBody Exam exam) {
+    accessControlService.assertTeachesCourseOrAdmin(exam.getCourse().getId());
+    return examService.saveExam(exam);
+  }
 }

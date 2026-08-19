@@ -18,22 +18,22 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class AuthController {
 
-    private final AuthenticationManager authenticationManager;
-    private final JwtService jwtService;
+  private final AuthenticationManager authenticationManager;
+  private final JwtService jwtService;
 
-    @PostMapping("/login")
-    public LoginResponseDto login(@Valid @RequestBody LoginRequestDto dto) {
-        var authentication =
-                authenticationManager.authenticate(
-                        new UsernamePasswordAuthenticationToken(dto.getEmail(), dto.getPassword()));
+  @PostMapping("/login")
+  public LoginResponseDto login(@Valid @RequestBody LoginRequestDto dto) {
+    var authentication =
+        authenticationManager.authenticate(
+            new UsernamePasswordAuthenticationToken(dto.getEmail(), dto.getPassword()));
 
-        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-        String token = jwtService.generateToken(userDetails);
+    CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+    String token = jwtService.generateToken(userDetails);
 
-        return LoginResponseDto.builder()
-                .token(token)
-                .email(userDetails.getUsername())
-                .role(userDetails.getUser().getRole().name())
-                .build();
-    }
+    return LoginResponseDto.builder()
+        .token(token)
+        .email(userDetails.getUsername())
+        .role(userDetails.getUser().getRole().name())
+        .build();
+  }
 }

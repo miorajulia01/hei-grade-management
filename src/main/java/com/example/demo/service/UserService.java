@@ -23,27 +23,27 @@ public class UserService {
 
   public User getUserById(String id) {
     JUser entity =
-            userRepository
-                    .findById(id)
-                    .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
+        userRepository
+            .findById(id)
+            .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
     return UserMapper.toModel(entity);
   }
 
   public User saveUser(User model) {
     String encodedPassword =
-            model.getPassword() == null || model.getPassword().isBlank()
-                    ? null
-                    : passwordEncoder.encode(model.getPassword());
+        model.getPassword() == null || model.getPassword().isBlank()
+            ? null
+            : passwordEncoder.encode(model.getPassword());
 
     JUser entity =
-            JUser.builder()
-                    .id(model.getId())
-                    .email(model.getEmail())
-                    .password(encodedPassword)
-                    .role(model.getRole())
-                    .status(model.getStatus())
-                    .createdAt(model.getCreatedAt() == null ? Instant.now() : model.getCreatedAt())
-                    .build();
+        JUser.builder()
+            .id(model.getId())
+            .email(model.getEmail())
+            .password(encodedPassword)
+            .role(model.getRole())
+            .status(model.getStatus())
+            .createdAt(model.getCreatedAt() == null ? Instant.now() : model.getCreatedAt())
+            .build();
     JUser saved = userRepository.save(entity);
     return UserMapper.toModel(saved);
   }
