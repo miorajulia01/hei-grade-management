@@ -67,6 +67,9 @@ public class SecurityConfig {
                     .hasRole("ADMIN")
                     .requestMatchers(
                         HttpMethod.PUT,
+                        "/users/**",
+                        "/teachers/**",
+                        "/students/**",
                         "/academic-years/**",
                         "/promotions/**",
                         "/programs/**",
@@ -78,6 +81,9 @@ public class SecurityConfig {
                     .hasRole("ADMIN")
                     .requestMatchers(
                         HttpMethod.DELETE,
+                        "/users/**",
+                        "/teachers/**",
+                        "/students/**",
                         "/academic-years/**",
                         "/promotions/**",
                         "/programs/**",
