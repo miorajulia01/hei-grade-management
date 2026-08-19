@@ -54,4 +54,35 @@ public class DocExportService {
     JDocExport saved = docExportRepository.save(entity);
     return DocExportMapper.toModel(saved);
   }
+
+  public DocExport updateDocExport(String id, DocExport model) {
+    JDocExport existing =
+        docExportRepository
+            .findById(id)
+            .orElseThrow(() -> new RuntimeException("DocExport not found with id: " + id));
+
+    if (model.getUser() != null && model.getUser().getId() != null) {
+      JUser user =
+          userRepository
+              .findById(model.getUser().getId())
+              .orElseThrow(() -> new RuntimeException("User not found"));
+      existing.setUser(user);
+    }
+    existing.setExportType(model.getExportType());
+    existing.setFileName(model.getFileName());
+    existing.setFilePath(model.getFilePath());
+    existing.setFileSize(model.getFileSize());
+    existing.setFormat(model.getFormat());
+    existing.setFilters(model.getFilters());
+
+    JDocExport saved = docExportRepository.save(existing);
+    return DocExportMapper.toModel(saved);
+  }
+
+  public void deleteDocExport(String id) {
+    if (!docExportRepository.existsById(id)) {
+      throw new RuntimeException("DocExport not found with id: " + id);
+    }
+    docExportRepository.deleteById(id);
+  }
 }
