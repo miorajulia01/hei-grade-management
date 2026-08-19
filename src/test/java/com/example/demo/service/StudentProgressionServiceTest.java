@@ -32,12 +32,16 @@ class StudentProgressionServiceTest {
         course1 =
                 JCourse.builder()
                         .id("course-1")
+                        .ref("PROG1")
+                        .title("Programming")
                         .credit(6)
                         .build();
 
         course2 =
                 JCourse.builder()
                         .id("course-2")
+                        .ref("WEB1")
+                        .title("Web Development")
                         .credit(4)
                         .build();
     }
@@ -48,14 +52,18 @@ class StudentProgressionServiceTest {
                 JExam.builder()
                         .id("exam-1")
                         .course(course1)
+                        .type("NORMAL")
                         .coefficient(0.4)
+                        .order(1)
                         .build();
 
         JExam exam2 =
                 JExam.builder()
                         .id("exam-2")
                         .course(course2)
+                        .type("NORMAL")
                         .coefficient(0.6)
+                        .order(2)
                         .build();
 
         JGrade grade1 =
@@ -75,9 +83,10 @@ class StudentProgressionServiceTest {
         when(gradeRepository.findByStudentId("student-1"))
                 .thenReturn(List.of(grade1, grade2));
 
-        double result = studentProgressionService.calculateAverage("student-1");
-
-        assertEquals(9.6, result, 0.001);
+        assertEquals(
+                9.6,
+                studentProgressionService.calculateAverage("student-1"),
+                0.001);
     }
 
     @Test
@@ -94,12 +103,16 @@ class StudentProgressionServiceTest {
     void shouldBeRepeatingWhenAverageIsBelowTen() {
         JExam exam =
                 JExam.builder()
+                        .id("exam-1")
                         .course(course1)
+                        .type("NORMAL")
                         .coefficient(1.0)
+                        .order(1)
                         .build();
 
         JGrade grade =
                 JGrade.builder()
+                        .id("grade-1")
                         .exam(exam)
                         .score(9.0)
                         .build();
@@ -107,20 +120,23 @@ class StudentProgressionServiceTest {
         when(gradeRepository.findByStudentId("student-1"))
                 .thenReturn(List.of(grade));
 
-        assertTrue(
-                studentProgressionService.isRepeating("student-1"));
+        assertTrue(studentProgressionService.isRepeating("student-1"));
     }
 
     @Test
     void shouldNotBeRepeatingWhenAverageIsTen() {
         JExam exam =
                 JExam.builder()
+                        .id("exam-1")
                         .course(course1)
+                        .type("NORMAL")
                         .coefficient(1.0)
+                        .order(1)
                         .build();
 
         JGrade grade =
                 JGrade.builder()
+                        .id("grade-1")
                         .exam(exam)
                         .score(10.0)
                         .build();
@@ -128,20 +144,23 @@ class StudentProgressionServiceTest {
         when(gradeRepository.findByStudentId("student-1"))
                 .thenReturn(List.of(grade));
 
-        assertFalse(
-                studentProgressionService.isRepeating("student-1"));
+        assertFalse(studentProgressionService.isRepeating("student-1"));
     }
 
     @Test
     void shouldBeAdmittedWhenAverageIsAtLeastTen() {
         JExam exam =
                 JExam.builder()
+                        .id("exam-1")
                         .course(course1)
+                        .type("NORMAL")
                         .coefficient(1.0)
+                        .order(1)
                         .build();
 
         JGrade grade =
                 JGrade.builder()
+                        .id("grade-1")
                         .exam(exam)
                         .score(12.0)
                         .build();
@@ -149,32 +168,39 @@ class StudentProgressionServiceTest {
         when(gradeRepository.findByStudentId("student-1"))
                 .thenReturn(List.of(grade));
 
-        assertTrue(
-                studentProgressionService.isAdmitted("student-1"));
+        assertTrue(studentProgressionService.isAdmitted("student-1"));
     }
 
     @Test
     void shouldCalculateValidatedCredits() {
         JExam exam1 =
                 JExam.builder()
+                        .id("exam-1")
                         .course(course1)
+                        .type("NORMAL")
                         .coefficient(1.0)
+                        .order(1)
                         .build();
 
         JExam exam2 =
                 JExam.builder()
+                        .id("exam-2")
                         .course(course2)
+                        .type("NORMAL")
                         .coefficient(1.0)
+                        .order(1)
                         .build();
 
         JGrade grade1 =
                 JGrade.builder()
+                        .id("grade-1")
                         .exam(exam1)
                         .score(14.0)
                         .build();
 
         JGrade grade2 =
                 JGrade.builder()
+                        .id("grade-2")
                         .exam(exam2)
                         .score(8.0)
                         .build();
@@ -191,24 +217,32 @@ class StudentProgressionServiceTest {
     void shouldCountCourseCreditsOnlyOnce() {
         JExam exam1 =
                 JExam.builder()
+                        .id("exam-1")
                         .course(course1)
+                        .type("NORMAL")
                         .coefficient(0.4)
+                        .order(1)
                         .build();
 
         JExam exam2 =
                 JExam.builder()
+                        .id("exam-2")
                         .course(course1)
+                        .type("NORMAL")
                         .coefficient(0.6)
+                        .order(2)
                         .build();
 
         JGrade grade1 =
                 JGrade.builder()
+                        .id("grade-1")
                         .exam(exam1)
                         .score(12.0)
                         .build();
 
         JGrade grade2 =
                 JGrade.builder()
+                        .id("grade-2")
                         .exam(exam2)
                         .score(14.0)
                         .build();
@@ -222,7 +256,64 @@ class StudentProgressionServiceTest {
     }
 
     @Test
-    void shouldGraduateWhenStudentHas180Credits() {
+    void shouldCapRetakeScoreAtTen() {
+        JExam exam =
+                JExam.builder()
+                        .id("exam-retake")
+                        .course(course1)
+                        .type("RATTRAPAGE")
+                        .coefficient(1.0)
+                        .order(2)
+                        .build();
+
+        JGrade grade =
+                JGrade.builder()
+                        .id("grade-retake")
+                        .exam(exam)
+                        .score(18.0)
+                        .build();
+
+        when(gradeRepository.findByStudentId("student-1"))
+                .thenReturn(List.of(grade));
+
+        assertEquals(
+                10.0,
+                studentProgressionService.calculateAverage("student-1"),
+                0.001);
+
+        assertEquals(
+                6,
+                studentProgressionService.calculateValidatedCredits("student-1"));
+    }
+
+    @Test
+    void shouldNotValidateCourseWhenRetakeScoreIsBelowTen() {
+        JExam exam =
+                JExam.builder()
+                        .id("exam-retake")
+                        .course(course1)
+                        .type("RATTRAPAGE")
+                        .coefficient(1.0)
+                        .order(2)
+                        .build();
+
+        JGrade grade =
+                JGrade.builder()
+                        .id("grade-retake")
+                        .exam(exam)
+                        .score(8.0)
+                        .build();
+
+        when(gradeRepository.findByStudentId("student-1"))
+                .thenReturn(List.of(grade));
+
+        assertEquals(
+                0,
+                studentProgressionService.calculateValidatedCredits("student-1"));
+    }
+
+    @Test
+    void shouldGraduateWith180CreditsAndAverageAtLeastTen() {
         JCourse course =
                 JCourse.builder()
                         .id("course-180")
@@ -231,12 +322,16 @@ class StudentProgressionServiceTest {
 
         JExam exam =
                 JExam.builder()
+                        .id("exam-1")
                         .course(course)
+                        .type("NORMAL")
                         .coefficient(1.0)
+                        .order(1)
                         .build();
 
         JGrade grade =
                 JGrade.builder()
+                        .id("grade-1")
                         .exam(exam)
                         .score(10.0)
                         .build();
@@ -244,26 +339,29 @@ class StudentProgressionServiceTest {
         when(gradeRepository.findByStudentId("student-1"))
                 .thenReturn(List.of(grade));
 
-        assertTrue(
-                studentProgressionService.hasGraduated("student-1"));
+        assertTrue(studentProgressionService.hasGraduated("student-1"));
     }
 
     @Test
-    void shouldNotGraduateWhenStudentHasLessThan180Credits() {
+    void shouldNotGraduateWithLessThan180Credits() {
         JCourse course =
                 JCourse.builder()
-                        .id("course-1")
+                        .id("course-120")
                         .credit(120)
                         .build();
 
         JExam exam =
                 JExam.builder()
+                        .id("exam-1")
                         .course(course)
+                        .type("NORMAL")
                         .coefficient(1.0)
+                        .order(1)
                         .build();
 
         JGrade grade =
                 JGrade.builder()
+                        .id("grade-1")
                         .exam(exam)
                         .score(12.0)
                         .build();
@@ -271,7 +369,36 @@ class StudentProgressionServiceTest {
         when(gradeRepository.findByStudentId("student-1"))
                 .thenReturn(List.of(grade));
 
-        assertFalse(
-                studentProgressionService.hasGraduated("student-1"));
+        assertFalse(studentProgressionService.hasGraduated("student-1"));
+    }
+
+    @Test
+    void shouldNotGraduateWhenAverageIsBelowTen() {
+        JCourse course =
+                JCourse.builder()
+                        .id("course-180")
+                        .credit(180)
+                        .build();
+
+        JExam exam =
+                JExam.builder()
+                        .id("exam-1")
+                        .course(course)
+                        .type("NORMAL")
+                        .coefficient(1.0)
+                        .order(1)
+                        .build();
+
+        JGrade grade =
+                JGrade.builder()
+                        .id("grade-1")
+                        .exam(exam)
+                        .score(9.0)
+                        .build();
+
+        when(gradeRepository.findByStudentId("student-1"))
+                .thenReturn(List.of(grade));
+
+        assertFalse(studentProgressionService.hasGraduated("student-1"));
     }
 }

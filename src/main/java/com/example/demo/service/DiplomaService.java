@@ -15,16 +15,19 @@ public class DiplomaService {
     private final StudentRepository studentRepository;
     private final StudentProgressionService studentProgressionService;
 
+    public boolean isGraduate(String studentId) {
+        double average = studentProgressionService.calculateAverage(studentId);
+        int credits = studentProgressionService.calculateValidatedCredits(studentId);
+
+        return average >= 10.0 && credits >= 180;
+    }
+
     public List<Diploma> getGraduatesByPromotion(String promotionId) {
         List<Diploma> graduates =
                 studentRepository.findByPromotionId(promotionId).stream()
                         .filter(student -> isGraduate(student.getId()))
-                        .sorted(
-                                Comparator.comparingDouble(
-                                                (JStudent student) ->
-                                                        studentProgressionService.calculateAverage(student.getId()))
-                                        .reversed())
                         .map(this::toDiploma)
+                        .sorted(Comparator.comparingDouble(Diploma::getAverage).reversed())
                         .toList();
 
         for (int i = 0; i < graduates.size(); i++) {
@@ -32,10 +35,6 @@ public class DiplomaService {
         }
 
         return graduates;
-    }
-
-    public boolean isGraduate(String studentId) {
-        return studentProgressionService.hasGraduated(studentId);
     }
 
     private Diploma toDiploma(JStudent student) {
