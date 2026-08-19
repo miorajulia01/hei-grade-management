@@ -142,4 +142,87 @@ class GroupServiceTest {
     verify(programRepository).findById("unknown");
     verify(groupRepository, never()).save(any());
   }
+
+  @Test
+  void shouldUpdateGroup() {
+    when(groupRepository.findById("group-1")).thenReturn(Optional.of(groupEntity));
+
+    Group model = Group.builder().id("group-1").ref("G2").capacity(30).build();
+
+    JGroup updatedEntity = JGroup.builder().id("group-1").ref("G2").capacity(30).build();
+
+    when(groupRepository.save(any(JGroup.class))).thenReturn(updatedEntity);
+
+    Group result = groupService.updateGroup("group-1", model);
+
+    assertNotNull(result);
+    assertEquals("G2", result.getRef());
+    assertEquals(30, result.getCapacity());
+
+    verify(groupRepository).findById("group-1");
+    verify(groupRepository).save(any(JGroup.class));
+  }
+
+  @Test
+  void shouldUpdateGroupWithProgram() {
+    when(groupRepository.findById("group-1")).thenReturn(Optional.of(groupEntity));
+
+    JProgram program = JProgram.builder().id("program-1").build();
+
+    Group model =
+        Group.builder()
+            .id("group-1")
+            .ref("G1")
+            .program(com.example.demo.model.Program.builder().id("program-1").build())
+            .build();
+
+    when(programRepository.findById("program-1")).thenReturn(Optional.of(program));
+
+    when(groupRepository.save(any(JGroup.class))).thenReturn(groupEntity);
+
+    groupService.updateGroup("group-1", model);
+
+    ArgumentCaptor<JGroup> captor = ArgumentCaptor.forClass(JGroup.class);
+
+    verify(groupRepository).save(captor.capture());
+
+    assertEquals(program, captor.getValue().getProgram());
+    verify(programRepository).findById("program-1");
+  }
+
+  @Test
+  void shouldThrowExceptionWhenUpdatingGroupNotFound() {
+    when(groupRepository.findById("unknown")).thenReturn(Optional.empty());
+
+    RuntimeException exception =
+        assertThrows(
+            RuntimeException.class,
+            () -> groupService.updateGroup("unknown", Group.builder().build()));
+
+    assertEquals("Group not found with id: unknown", exception.getMessage());
+
+    verify(groupRepository).findById("unknown");
+    verify(groupRepository, never()).save(any());
+  }
+
+  @Test
+  void shouldDeleteGroup() {
+    when(groupRepository.existsById("group-1")).thenReturn(true);
+
+    groupService.deleteGroup("group-1");
+
+    verify(groupRepository).deleteById("group-1");
+  }
+
+  @Test
+  void shouldThrowExceptionWhenDeletingGroupNotFound() {
+    when(groupRepository.existsById("unknown")).thenReturn(false);
+
+    RuntimeException exception =
+        assertThrows(RuntimeException.class, () -> groupService.deleteGroup("unknown"));
+
+    assertEquals("Group not found with id: unknown", exception.getMessage());
+
+    verify(groupRepository, never()).deleteById("unknown");
+  }
 }

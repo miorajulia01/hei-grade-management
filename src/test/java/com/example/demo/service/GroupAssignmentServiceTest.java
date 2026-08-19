@@ -210,4 +210,108 @@ class GroupAssignmentServiceTest {
     verify(semesterRepository).findById("unknown");
     verify(groupAssignmentRepository, never()).save(any());
   }
+
+  @Test
+  void shouldUpdateGroupAssignment() {
+    when(groupAssignmentRepository.findById("assignment-1"))
+        .thenReturn(Optional.of(assignmentEntity));
+
+    GroupAssignment model = GroupAssignment.builder().id("assignment-1").isActive(false).build();
+
+    JGroupAssignment updatedEntity =
+        JGroupAssignment.builder().id("assignment-1").isActive(false).build();
+
+    when(groupAssignmentRepository.save(any(JGroupAssignment.class))).thenReturn(updatedEntity);
+
+    GroupAssignment result = groupAssignmentService.updateGroupAssignment("assignment-1", model);
+
+    assertNotNull(result);
+    assertFalse(result.getIsActive());
+
+    verify(groupAssignmentRepository).findById("assignment-1");
+    verify(groupAssignmentRepository).save(any(JGroupAssignment.class));
+  }
+
+  @Test
+  void shouldUpdateGroupAssignmentWithRelations() {
+    when(groupAssignmentRepository.findById("assignment-1"))
+        .thenReturn(Optional.of(assignmentEntity));
+
+    JStudent student = JStudent.builder().id("student-1").studentNumber("STD001").build();
+
+    JGroup group = JGroup.builder().id("group-1").ref("G1").build();
+
+    JSemester semester = JSemester.builder().id("semester-1").build();
+
+    GroupAssignment model =
+        GroupAssignment.builder()
+            .id("assignment-1")
+            .student(com.example.demo.model.Student.builder().id("student-1").build())
+            .group(com.example.demo.model.Group.builder().id("group-1").build())
+            .semester(com.example.demo.model.Semester.builder().id("semester-1").build())
+            .build();
+
+    when(studentRepository.findById("student-1")).thenReturn(Optional.of(student));
+
+    when(groupRepository.findById("group-1")).thenReturn(Optional.of(group));
+
+    when(semesterRepository.findById("semester-1")).thenReturn(Optional.of(semester));
+
+    when(groupAssignmentRepository.save(any(JGroupAssignment.class))).thenReturn(assignmentEntity);
+
+    groupAssignmentService.updateGroupAssignment("assignment-1", model);
+
+    ArgumentCaptor<JGroupAssignment> captor = ArgumentCaptor.forClass(JGroupAssignment.class);
+
+    verify(groupAssignmentRepository).save(captor.capture());
+
+    JGroupAssignment savedEntity = captor.getValue();
+
+    assertEquals(student, savedEntity.getStudent());
+    assertEquals(group, savedEntity.getGroup());
+    assertEquals(semester, savedEntity.getSemester());
+
+    verify(studentRepository).findById("student-1");
+    verify(groupRepository).findById("group-1");
+    verify(semesterRepository).findById("semester-1");
+  }
+
+  @Test
+  void shouldThrowExceptionWhenUpdatingGroupAssignmentNotFound() {
+    when(groupAssignmentRepository.findById("unknown")).thenReturn(Optional.empty());
+
+    RuntimeException exception =
+        assertThrows(
+            RuntimeException.class,
+            () ->
+                groupAssignmentService.updateGroupAssignment(
+                    "unknown", GroupAssignment.builder().build()));
+
+    assertEquals("GroupAssignment not found with id: unknown", exception.getMessage());
+
+    verify(groupAssignmentRepository).findById("unknown");
+    verify(groupAssignmentRepository, never()).save(any());
+  }
+
+  @Test
+  void shouldDeleteGroupAssignment() {
+    when(groupAssignmentRepository.existsById("assignment-1")).thenReturn(true);
+
+    groupAssignmentService.deleteGroupAssignment("assignment-1");
+
+    verify(groupAssignmentRepository).deleteById("assignment-1");
+  }
+
+  @Test
+  void shouldThrowExceptionWhenDeletingGroupAssignmentNotFound() {
+    when(groupAssignmentRepository.existsById("unknown")).thenReturn(false);
+
+    RuntimeException exception =
+        assertThrows(
+            RuntimeException.class, () -> groupAssignmentService.deleteGroupAssignment("unknown"));
+
+    assertEquals("GroupAssignment not found with id: unknown", exception.getMessage());
+
+    verify(groupAssignmentRepository, never()).deleteById("unknown");
+  }
 }

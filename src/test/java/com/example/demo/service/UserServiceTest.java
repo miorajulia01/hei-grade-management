@@ -16,11 +16,14 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest {
 
   @Mock private UserRepository userRepository;
+
+  @Mock private PasswordEncoder passwordEncoder;
 
   @InjectMocks private UserService userService;
 
@@ -90,5 +93,81 @@ class UserServiceTest {
 
     assertEquals("user-1", savedEntity.getId());
     assertEquals("test@example.com", savedEntity.getEmail());
+  }
+
+  @Test
+  void shouldUpdateUser() {
+    when(userRepository.findById("user-1")).thenReturn(Optional.of(userEntity));
+
+    User model = User.builder().id("user-1").email("updated@example.com").build();
+
+    JUser updatedEntity = JUser.builder().id("user-1").email("updated@example.com").build();
+
+    when(userRepository.save(any(JUser.class))).thenReturn(updatedEntity);
+
+    User result = userService.updateUser("user-1", model);
+
+    assertNotNull(result);
+    assertEquals("updated@example.com", result.getEmail());
+
+    verify(userRepository).findById("user-1");
+    verify(userRepository).save(any(JUser.class));
+  }
+
+  @Test
+  void shouldUpdateUserPasswordWithEncoding() {
+    when(userRepository.findById("user-1")).thenReturn(Optional.of(userEntity));
+
+    when(passwordEncoder.encode("new-password")).thenReturn("encoded-password");
+
+    User model = User.builder().id("user-1").password("new-password").build();
+
+    JUser updatedEntity =
+        JUser.builder().id("user-1").email("test@example.com").password("encoded-password").build();
+
+    when(userRepository.save(any(JUser.class))).thenReturn(updatedEntity);
+
+    userService.updateUser("user-1", model);
+
+    ArgumentCaptor<JUser> captor = ArgumentCaptor.forClass(JUser.class);
+
+    verify(userRepository).save(captor.capture());
+
+    assertEquals("encoded-password", captor.getValue().getPassword());
+    verify(passwordEncoder).encode("new-password");
+  }
+
+  @Test
+  void shouldThrowExceptionWhenUpdatingUserNotFound() {
+    when(userRepository.findById("unknown")).thenReturn(Optional.empty());
+
+    RuntimeException exception =
+        assertThrows(RuntimeException.class, () -> userService.updateUser("unknown", userModel));
+
+    assertEquals("User not found with id: unknown", exception.getMessage());
+
+    verify(userRepository).findById("unknown");
+    verify(userRepository, never()).save(any());
+  }
+
+  @Test
+  void shouldDeleteUser() {
+    when(userRepository.existsById("user-1")).thenReturn(true);
+
+    userService.deleteUser("user-1");
+
+    verify(userRepository).deleteById("user-1");
+  }
+
+  @Test
+  void shouldThrowExceptionWhenDeletingUserNotFound() {
+    when(userRepository.existsById("unknown")).thenReturn(false);
+
+    RuntimeException exception =
+        assertThrows(RuntimeException.class, () -> userService.deleteUser("unknown"));
+
+    assertEquals("User not found with id: unknown", exception.getMessage());
+
+    verify(userRepository, never()).deleteById("unknown");
   }
 }
