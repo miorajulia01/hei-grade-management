@@ -11,7 +11,9 @@ import com.example.demo.repository.DocExportRepository;
 import com.example.demo.repository.GradeRepository;
 import com.example.demo.repository.StudentRepository;
 import com.example.demo.service.GradeService;
+import com.example.demo.service.PdfService;
 import jakarta.mail.internet.InternetAddress;
+import java.io.File;
 import java.time.Instant;
 import java.util.Comparator;
 import java.util.List;
@@ -29,6 +31,7 @@ public class SendTranscriptRequestedService implements Consumer<SendTranscriptRe
   private final GradeRepository gradeRepository;
   private final GradeService gradeService;
   private final DocExportRepository docExportRepository;
+  private final PdfService pdfService;
   private final Mailer mailer;
 
   @SneakyThrows
@@ -41,6 +44,7 @@ public class SendTranscriptRequestedService implements Consumer<SendTranscriptRe
                 () -> new RuntimeException("Student not found with id: " + event.getStudentId()));
 
     String htmlBody = buildTranscriptHtml(student);
+    File pdfFile = pdfService.generatePdfFromHtml(htmlBody, "releve_" + student.getStudentNumber());
 
     Email email =
         new Email(
@@ -48,19 +52,23 @@ public class SendTranscriptRequestedService implements Consumer<SendTranscriptRe
             List.of(),
             List.of(),
             "Votre releve de notes",
-            htmlBody,
-            List.of());
+            "Bonjour "
+                + student.getFirstName()
+                + ", veuillez trouver votre releve de notes en piece jointe.",
+            List.of(pdfFile));
     mailer.accept(email);
 
     JDocExport export =
         JDocExport.builder()
             .user(student.getUser())
             .exportType("TRANSCRIPT")
-            .fileName("releve_" + student.getStudentNumber() + ".html")
-            .format("HTML")
+            .fileName(pdfFile.getName())
+            .format("PDF")
             .createdAt(Instant.now())
             .build();
     docExportRepository.save(export);
+
+    pdfFile.deleteOnExit();
   }
 
   private String buildTranscriptHtml(JStudent student) {
