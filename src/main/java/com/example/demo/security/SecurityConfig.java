@@ -63,7 +63,8 @@ public class SecurityConfig {
                         "/group-assignments",
                         "/semesters",
                         "/courses",
-                        "/course-teachers")
+                        "/course-teachers",
+                        "/doc-exports")
                     .hasRole("ADMIN")
                     .requestMatchers(
                         HttpMethod.PUT,
@@ -77,7 +78,8 @@ public class SecurityConfig {
                         "/group-assignments/**",
                         "/semesters/**",
                         "/courses/**",
-                        "/course-teachers/**")
+                        "/course-teachers/**",
+                        "/doc-exports/**")
                     .hasRole("ADMIN")
                     .requestMatchers(
                         HttpMethod.DELETE,
@@ -93,7 +95,8 @@ public class SecurityConfig {
                         "/courses/**",
                         "/course-teachers/**",
                         "/exams/**",
-                        "/grades/**")
+                        "/grades/**",
+                        "/doc-exports/**")
                     .hasRole("ADMIN")
                     .requestMatchers(HttpMethod.POST, "/exams", "/grades")
                     .hasAnyRole("ADMIN", "TEACHER")
@@ -103,6 +106,8 @@ public class SecurityConfig {
                     .hasAnyRole("ADMIN", "TEACHER")
                     .requestMatchers(HttpMethod.GET, "/promotions/*/graduates")
                     .hasAnyRole("ADMIN", "TEACHER")
+                    .requestMatchers(HttpMethod.GET, "/doc-exports/**")
+                    .hasRole("ADMIN")
                     .anyRequest()
                     .authenticated())
         .authenticationProvider(authenticationProvider())
