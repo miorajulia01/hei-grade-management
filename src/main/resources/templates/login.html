@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Connexion</title>
+  </head>
+  <body>
+    <main>
+      <h1>Connexion administrateur</h1>
+
+      <p th:if="${param.error}">Email ou mot de passe incorrect.</p>
+      <p th:if="${param.logout}">Vous êtes déconnecté.</p>
+
+      <form method="post" th:action="@{/login}">
+        <label for="username">Email</label>
+        <input id="username" name="username" type="email" required />
+
+        <label for="password">Mot de passe</label>
+        <input id="password" name="password" type="password" required />
+
+        <button type="submit">Se connecter</button>
+      </form>
+    </main>
+  </body>
+</html>
