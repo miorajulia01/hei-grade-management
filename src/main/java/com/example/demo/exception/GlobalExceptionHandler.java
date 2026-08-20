@@ -4,8 +4,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.time.Instant;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.AuthenticationException;
@@ -43,6 +45,32 @@ public class GlobalExceptionHandler {
             .map(fe -> fe.getField() + ": " + fe.getDefaultMessage())
             .collect(Collectors.joining("; "));
     return build(HttpStatus.BAD_REQUEST, message, request);
+  }
+
+  @ExceptionHandler(HttpMessageNotReadableException.class)
+  public ResponseEntity<ApiError> handleUnreadableMessage(
+      HttpMessageNotReadableException ex, HttpServletRequest request) {
+    return build(HttpStatus.BAD_REQUEST, "Request body is invalid or incomplete.", request);
+  }
+
+  @ExceptionHandler(DataIntegrityViolationException.class)
+  public ResponseEntity<ApiError> handleDataIntegrityViolation(
+      DataIntegrityViolationException ex, HttpServletRequest request) {
+    log.warn("Database constraint violation on {}", request.getRequestURI(), ex);
+    return build(HttpStatus.CONFLICT, "The request conflicts with existing data.", request);
+  }
+
+  @ExceptionHandler(IllegalArgumentException.class)
+  public ResponseEntity<ApiError> handleIllegalArgument(
+      IllegalArgumentException ex, HttpServletRequest request) {
+    return build(HttpStatus.BAD_REQUEST, ex.getMessage(), request);
+  }
+
+  @ExceptionHandler(Exception.class)
+  public ResponseEntity<ApiError> handleUnexpectedException(
+      Exception ex, HttpServletRequest request) {
+    log.error("Unexpected error on {}", request.getRequestURI(), ex);
+    return build(HttpStatus.INTERNAL_SERVER_ERROR, "An unexpected server error occurred.", request);
   }
 
   private ResponseEntity<ApiError> build(
